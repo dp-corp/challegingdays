@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-display: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -50,58 +50,57 @@
 }
 
 :root {
-  --radius: 0.75rem;
-  /* Light - warm paper */
-  --background: oklch(0.985 0.005 95);
-  --foreground: oklch(0.18 0.02 250);
+  --radius: 0.875rem;
+  /* Light - clean white */
+  --background: oklch(0.99 0.003 250);
+  --foreground: oklch(0.2 0.02 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 250);
+  --card-foreground: oklch(0.2 0.02 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 250);
-  --primary: oklch(0.55 0.15 155); /* emerald */
+  --popover-foreground: oklch(0.2 0.02 260);
+  --primary: oklch(0.55 0.2 265); /* indigo */
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.01 250);
-  --secondary-foreground: oklch(0.2 0.02 250);
-  --muted: oklch(0.95 0.008 250);
-  --muted-foreground: oklch(0.5 0.02 250);
-  --accent: oklch(0.78 0.16 75); /* amber */
+  --secondary: oklch(0.96 0.01 260);
+  --secondary-foreground: oklch(0.2 0.02 260);
+  --muted: oklch(0.96 0.008 260);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.72 0.16 65); /* warm coral */
   --accent-foreground: oklch(0.2 0.04 60);
   --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --success: oklch(0.65 0.17 150);
+  --success: oklch(0.62 0.16 150);
   --success-foreground: oklch(0.99 0 0);
   --warning: oklch(0.78 0.16 75);
   --warning-foreground: oklch(0.2 0.04 60);
-  --border: oklch(0.9 0.01 250);
-  --input: oklch(0.92 0.01 250);
-  --ring: oklch(0.55 0.15 155);
-  --chart-1: oklch(0.6 0.17 155);
-  --chart-2: oklch(0.78 0.16 75);
-  --chart-3: oklch(0.55 0.15 240);
+  --border: oklch(0.92 0.008 260);
+  --input: oklch(0.94 0.008 260);
+  --ring: oklch(0.55 0.2 265);
+  --chart-1: oklch(0.6 0.2 265);
+  --chart-2: oklch(0.72 0.16 65);
+  --chart-3: oklch(0.62 0.16 150);
   --chart-4: oklch(0.65 0.2 350);
   --chart-5: oklch(0.7 0.15 200);
-  --sidebar: oklch(0.97 0.005 95);
-  --sidebar-foreground: oklch(0.2 0.02 250);
-  --sidebar-accent: oklch(0.93 0.015 155);
-  --sidebar-accent-foreground: oklch(0.3 0.1 155);
-  --sidebar-border: oklch(0.9 0.01 250);
+  --sidebar: oklch(0.985 0.005 260);
+  --sidebar-foreground: oklch(0.25 0.02 260);
+  --sidebar-accent: oklch(0.94 0.02 265);
+  --sidebar-accent-foreground: oklch(0.35 0.15 265);
+  --sidebar-border: oklch(0.92 0.008 260);
 }
 
 .dark {
-  /* Deep midnight with emerald accents */
-  --background: oklch(0.16 0.02 250);
-  --foreground: oklch(0.96 0.01 95);
-  --card: oklch(0.21 0.025 250);
-  --card-foreground: oklch(0.96 0.01 95);
-  --popover: oklch(0.21 0.025 250);
-  --popover-foreground: oklch(0.96 0.01 95);
-  --primary: oklch(0.72 0.17 155);
-  --primary-foreground: oklch(0.15 0.04 155);
-  --secondary: oklch(0.26 0.025 250);
-  --secondary-foreground: oklch(0.96 0.01 95);
-  --muted: oklch(0.26 0.025 250);
-  --muted-foreground: oklch(0.68 0.02 250);
-  --accent: oklch(0.82 0.16 75);
+  --background: oklch(0.16 0.015 260);
+  --foreground: oklch(0.96 0.01 260);
+  --card: oklch(0.21 0.02 260);
+  --card-foreground: oklch(0.96 0.01 260);
+  --popover: oklch(0.21 0.02 260);
+  --popover-foreground: oklch(0.96 0.01 260);
+  --primary: oklch(0.7 0.18 265);
+  --primary-foreground: oklch(0.15 0.04 265);
+  --secondary: oklch(0.26 0.02 260);
+  --secondary-foreground: oklch(0.96 0.01 260);
+  --muted: oklch(0.26 0.02 260);
+  --muted-foreground: oklch(0.7 0.02 260);
+  --accent: oklch(0.78 0.16 65);
   --accent-foreground: oklch(0.2 0.05 60);
   --destructive: oklch(0.65 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
@@ -111,36 +110,36 @@
   --warning-foreground: oklch(0.2 0.05 60);
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.72 0.17 155);
-  --chart-1: oklch(0.72 0.17 155);
-  --chart-2: oklch(0.82 0.16 75);
-  --chart-3: oklch(0.7 0.15 240);
+  --ring: oklch(0.7 0.18 265);
+  --chart-1: oklch(0.72 0.18 265);
+  --chart-2: oklch(0.78 0.16 65);
+  --chart-3: oklch(0.72 0.17 150);
   --chart-4: oklch(0.7 0.2 350);
   --chart-5: oklch(0.75 0.15 200);
-  --sidebar: oklch(0.18 0.02 250);
-  --sidebar-foreground: oklch(0.92 0.01 95);
-  --sidebar-accent: oklch(0.26 0.04 155);
-  --sidebar-accent-foreground: oklch(0.85 0.12 155);
+  --sidebar: oklch(0.18 0.02 260);
+  --sidebar-foreground: oklch(0.92 0.01 260);
+  --sidebar-accent: oklch(0.28 0.04 265);
+  --sidebar-accent-foreground: oklch(0.88 0.1 265);
   --sidebar-border: oklch(1 0 0 / 6%);
 }
 
 @layer base {
   * { border-color: var(--color-border); }
-  html, body { font-family: var(--font-sans); }
+  html, body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, color-mix(in oklab, var(--color-primary) 12%, transparent), transparent),
-      radial-gradient(ellipse 60% 40% at 100% 100%, color-mix(in oklab, var(--color-accent) 8%, transparent), transparent);
+      radial-gradient(ellipse 60% 40% at 50% -10%, color-mix(in oklab, var(--color-primary) 10%, transparent), transparent),
+      radial-gradient(ellipse 50% 30% at 100% 100%, color-mix(in oklab, var(--color-accent) 6%, transparent), transparent);
     background-attachment: fixed;
   }
-  .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+  .font-display { font-family: var(--font-display); letter-spacing: -0.025em; font-weight: 700; }
 }
 
 @layer utilities {
   .glass {
-    background: color-mix(in oklab, var(--color-card) 70%, transparent);
+    background: color-mix(in oklab, var(--color-card) 75%, transparent);
     backdrop-filter: blur(12px);
     border: 1px solid color-mix(in oklab, var(--color-border) 80%, transparent);
   }
@@ -150,4 +149,5 @@
     background-clip: text;
     color: transparent;
   }
+  .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
 }

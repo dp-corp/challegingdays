@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { AppSidebar, MobileNav } from "@/components/AppSidebar";
+import { AppSidebar, MobileNav, MobileTopBar } from "@/components/AppSidebar";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
@@ -12,7 +12,7 @@ function AppLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
+    if (!loading && !user) navigate({ to: "/login", replace: true });
   }, [loading, user, navigate]);
 
   if (loading || !user) {
@@ -25,7 +25,8 @@ function AppLayout() {
     <div className="flex min-h-screen">
       <AppSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <main className="flex-1 px-4 md:px-8 py-6 md:py-10 max-w-7xl mx-auto w-full">
+        <MobileTopBar />
+        <main className="flex-1 w-full mx-auto max-w-5xl px-4 sm:px-6 md:px-8 py-5 md:py-8">
           <Outlet />
         </main>
         <MobileNav />
