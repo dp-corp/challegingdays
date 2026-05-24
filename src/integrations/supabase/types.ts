@@ -14,7 +14,421 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          code: string
+          description: string | null
+          earned_at: string
+          id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          description?: string | null
+          earned_at?: string
+          id?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          description?: string | null
+          earned_at?: string
+          id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      foundation: {
+        Row: {
+          dream_outcome: string | null
+          one_word: string | null
+          success_headline: string | null
+          updated_at: string
+          user_id: string
+          why_matters: string | null
+        }
+        Insert: {
+          dream_outcome?: string | null
+          one_word?: string | null
+          success_headline?: string | null
+          updated_at?: string
+          user_id: string
+          why_matters?: string | null
+        }
+        Update: {
+          dream_outcome?: string | null
+          one_word?: string | null
+          success_headline?: string | null
+          updated_at?: string
+          user_id?: string
+          why_matters?: string | null
+        }
+        Relationships: []
+      }
+      goals: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          milestones: Json
+          notes: string | null
+          progress: number
+          start_date: string
+          target_date: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          milestones?: Json
+          notes?: string | null
+          progress?: number
+          start_date?: string
+          target_date?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          milestones?: Json
+          notes?: string | null
+          progress?: number
+          start_date?: string
+          target_date?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      habit_logs: {
+        Row: {
+          completed: boolean
+          created_at: string
+          habit_id: string
+          id: string
+          log_date: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          habit_id: string
+          id?: string
+          log_date?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          habit_id?: string
+          id?: string
+          log_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habit_logs_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      habits: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+          target_per_day: number
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+          target_per_day?: number
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          target_per_day?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          challenge_start_date: string
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          challenge_start_date?: string
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          challenge_start_date?: string
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          deadline: string | null
+          description: string | null
+          id: string
+          name: string
+          notes: string | null
+          priority: string
+          progress: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          priority?: string
+          progress?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          priority?: string
+          progress?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reflections: {
+        Row: {
+          ai_summary: string | null
+          biggest_win: string | null
+          challenge: string | null
+          created_at: string
+          gratitude: string | null
+          id: string
+          reflection_date: string
+          tomorrow_focus: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          biggest_win?: string | null
+          challenge?: string | null
+          created_at?: string
+          gratitude?: string | null
+          id?: string
+          reflection_date?: string
+          tomorrow_focus?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_summary?: string | null
+          biggest_win?: string | null
+          challenge?: string | null
+          created_at?: string
+          gratitude?: string | null
+          id?: string
+          reflection_date?: string
+          tomorrow_focus?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scores: {
+        Row: {
+          created_at: string
+          daily_score: number
+          goals_score: number
+          habits_score: number
+          health_score: number
+          id: string
+          learning_score: number
+          projects_score: number
+          score_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_score?: number
+          goals_score?: number
+          habits_score?: number
+          health_score?: number
+          id?: string
+          learning_score?: number
+          projects_score?: number
+          score_date?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_score?: number
+          goals_score?: number
+          habits_score?: number
+          health_score?: number
+          id?: string
+          learning_score?: number
+          projects_score?: number
+          score_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string
+          project_id: string | null
+          sort_order: number
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          project_id?: string | null
+          sort_order?: number
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          project_id?: string | null
+          sort_order?: number
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_reviews: {
+        Row: {
+          career_accomplishments: string | null
+          challenges: string | null
+          created_at: string
+          energy_level: number | null
+          exercise_days: number | null
+          id: string
+          important_connections: string | null
+          income_earned: number | null
+          lessons: string | null
+          next_week_priorities: string | null
+          savings_added: number | null
+          user_id: string
+          week_start: string
+          weight: number | null
+          wins: string | null
+        }
+        Insert: {
+          career_accomplishments?: string | null
+          challenges?: string | null
+          created_at?: string
+          energy_level?: number | null
+          exercise_days?: number | null
+          id?: string
+          important_connections?: string | null
+          income_earned?: number | null
+          lessons?: string | null
+          next_week_priorities?: string | null
+          savings_added?: number | null
+          user_id: string
+          week_start: string
+          weight?: number | null
+          wins?: string | null
+        }
+        Update: {
+          career_accomplishments?: string | null
+          challenges?: string | null
+          created_at?: string
+          energy_level?: number | null
+          exercise_days?: number | null
+          id?: string
+          important_connections?: string | null
+          income_earned?: number | null
+          lessons?: string | null
+          next_week_priorities?: string | null
+          savings_added?: number | null
+          user_id?: string
+          week_start?: string
+          weight?: number | null
+          wins?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
