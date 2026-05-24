@@ -9,38 +9,197 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppReviewRouteImport } from './routes/_app/review'
+import { Route as AppReflectionsRouteImport } from './routes/_app/reflections'
+import { Route as AppProjectsRouteImport } from './routes/_app/projects'
+import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppGoalsRouteImport } from './routes/_app/goals'
+import { Route as AppFoundationRouteImport } from './routes/_app/foundation'
+import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppDailyRouteImport } from './routes/_app/daily'
+import { Route as AppAnalyticsRouteImport } from './routes/_app/analytics'
+import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects.$projectId'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppReviewRoute = AppReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReflectionsRoute = AppReflectionsRouteImport.update({
+  id: '/reflections',
+  path: '/reflections',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProjectsRoute = AppProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGoalsRoute = AppGoalsRouteImport.update({
+  id: '/goals',
+  path: '/goals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFoundationRoute = AppFoundationRouteImport.update({
+  id: '/foundation',
+  path: '/foundation',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDailyRoute = AppDailyRouteImport.update({
+  id: '/daily',
+  path: '/daily',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => AppProjectsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/analytics': typeof AppAnalyticsRoute
+  '/daily': typeof AppDailyRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/foundation': typeof AppFoundationRoute
+  '/goals': typeof AppGoalsRoute
+  '/profile': typeof AppProfileRoute
+  '/projects': typeof AppProjectsRouteWithChildren
+  '/reflections': typeof AppReflectionsRoute
+  '/review': typeof AppReviewRoute
+  '/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/analytics': typeof AppAnalyticsRoute
+  '/daily': typeof AppDailyRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/foundation': typeof AppFoundationRoute
+  '/goals': typeof AppGoalsRoute
+  '/profile': typeof AppProfileRoute
+  '/projects': typeof AppProjectsRouteWithChildren
+  '/reflections': typeof AppReflectionsRoute
+  '/review': typeof AppReviewRoute
+  '/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_app/analytics': typeof AppAnalyticsRoute
+  '/_app/daily': typeof AppDailyRoute
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/foundation': typeof AppFoundationRoute
+  '/_app/goals': typeof AppGoalsRoute
+  '/_app/profile': typeof AppProfileRoute
+  '/_app/projects': typeof AppProjectsRouteWithChildren
+  '/_app/reflections': typeof AppReflectionsRoute
+  '/_app/review': typeof AppReviewRoute
+  '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/analytics'
+    | '/daily'
+    | '/dashboard'
+    | '/foundation'
+    | '/goals'
+    | '/profile'
+    | '/projects'
+    | '/reflections'
+    | '/review'
+    | '/projects/$projectId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/analytics'
+    | '/daily'
+    | '/dashboard'
+    | '/foundation'
+    | '/goals'
+    | '/profile'
+    | '/projects'
+    | '/reflections'
+    | '/review'
+    | '/projects/$projectId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/login'
+    | '/_app/analytics'
+    | '/_app/daily'
+    | '/_app/dashboard'
+    | '/_app/foundation'
+    | '/_app/goals'
+    | '/_app/profile'
+    | '/_app/projects'
+    | '/_app/reflections'
+    | '/_app/review'
+    | '/_app/projects/$projectId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +207,121 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/review': {
+      id: '/_app/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof AppReviewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reflections': {
+      id: '/_app/reflections'
+      path: '/reflections'
+      fullPath: '/reflections'
+      preLoaderRoute: typeof AppReflectionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/projects': {
+      id: '/_app/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof AppProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/profile': {
+      id: '/_app/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/goals': {
+      id: '/_app/goals'
+      path: '/goals'
+      fullPath: '/goals'
+      preLoaderRoute: typeof AppGoalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/foundation': {
+      id: '/_app/foundation'
+      path: '/foundation'
+      fullPath: '/foundation'
+      preLoaderRoute: typeof AppFoundationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/daily': {
+      id: '/_app/daily'
+      path: '/daily'
+      fullPath: '/daily'
+      preLoaderRoute: typeof AppDailyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/analytics': {
+      id: '/_app/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/projects/$projectId': {
+      id: '/_app/projects/$projectId'
+      path: '/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof AppProjectsProjectIdRouteImport
+      parentRoute: typeof AppProjectsRoute
+    }
   }
 }
 
+interface AppProjectsRouteChildren {
+  AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
+}
+
+const AppProjectsRouteChildren: AppProjectsRouteChildren = {
+  AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
+}
+
+const AppProjectsRouteWithChildren = AppProjectsRoute._addFileChildren(
+  AppProjectsRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
+  AppDailyRoute: typeof AppDailyRoute
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppFoundationRoute: typeof AppFoundationRoute
+  AppGoalsRoute: typeof AppGoalsRoute
+  AppProfileRoute: typeof AppProfileRoute
+  AppProjectsRoute: typeof AppProjectsRouteWithChildren
+  AppReflectionsRoute: typeof AppReflectionsRoute
+  AppReviewRoute: typeof AppReviewRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAnalyticsRoute: AppAnalyticsRoute,
+  AppDailyRoute: AppDailyRoute,
+  AppDashboardRoute: AppDashboardRoute,
+  AppFoundationRoute: AppFoundationRoute,
+  AppGoalsRoute: AppGoalsRoute,
+  AppProfileRoute: AppProfileRoute,
+  AppProjectsRoute: AppProjectsRouteWithChildren,
+  AppReflectionsRoute: AppReflectionsRoute,
+  AppReviewRoute: AppReviewRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
