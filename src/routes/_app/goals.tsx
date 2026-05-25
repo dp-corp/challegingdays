@@ -128,7 +128,7 @@ function GoalsPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         {goals.map((g) => (
-          <GoalCard key={g.id} goal={g} categories={categories} onProgress={(p) => updateProgress(g.id, p)} onRemove={() => remove(g.id)} onChanged={() => qc.invalidateQueries({ queryKey: ["goals", uid] })} />
+          <GoalCard key={g.id} goal={g} categories={categories} onProgress={(p: number) => updateProgress(g.id, p)} onRemove={() => remove(g.id)} onChanged={() => qc.invalidateQueries({ queryKey: ["goals", uid] })} />
         ))}
         {goals.length === 0 && (
           <p className="text-sm text-muted-foreground text-center md:col-span-2">No goals yet. Create your Number One Goal first.</p>
