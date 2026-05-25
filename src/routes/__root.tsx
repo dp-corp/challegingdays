@@ -7,10 +7,21 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 
 import appCss from "../styles.css?url";
+
+const THEMES: Record<string, { primary: string; accent: string }> = {
+  Indigo: { primary: "oklch(0.7 0.18 265)", accent: "oklch(0.78 0.16 65)" },
+  Emerald: { primary: "oklch(0.72 0.17 150)", accent: "oklch(0.82 0.16 75)" },
+  Rose: { primary: "oklch(0.7 0.2 350)", accent: "oklch(0.78 0.16 65)" },
+  Cyan: { primary: "oklch(0.75 0.15 200)", accent: "oklch(0.78 0.16 65)" },
+  Amber: { primary: "oklch(0.78 0.16 75)", accent: "oklch(0.72 0.17 150)" },
+  Violet: { primary: "oklch(0.68 0.22 305)", accent: "oklch(0.75 0.15 200)" },
+};
+
 
 function NotFoundComponent() {
   return (
@@ -73,6 +84,20 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved) document.documentElement.classList.toggle("dark", saved === "dark");
+    const accent = localStorage.getItem("theme_accent");
+    const t = accent && THEMES[accent];
+    if (t) {
+      const r = document.documentElement;
+      r.style.setProperty("--primary", t.primary);
+      r.style.setProperty("--accent", t.accent);
+      r.style.setProperty("--ring", t.primary);
+      r.style.setProperty("--chart-1", t.primary);
+      r.style.setProperty("--chart-2", t.accent);
+    }
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
