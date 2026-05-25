@@ -87,7 +87,7 @@ function GoalsPage() {
   };
 
   const goals = goalsQ.data ?? [];
-  const avgProgress = goals.length ? Math.round(goals.reduce((a, g) => a + (g.progress ?? 0), 0) / goals.length) : 0;
+  const avgProgress = goals.length ? Math.round(goals.reduce((a: number, g: any) => a + (g.progress ?? 0), 0) / goals.length) : 0;
   const done = goals.filter((g) => (g.progress ?? 0) >= 100).length;
 
   return (
