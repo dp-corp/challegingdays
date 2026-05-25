@@ -63,7 +63,7 @@ function ReflectionsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl mx-auto">
       <div>
         <h1 className="font-display text-4xl md:text-5xl">Evening Reflection</h1>
         <p className="mt-2 text-muted-foreground">Four questions. Five minutes. A clearer tomorrow.</p>
