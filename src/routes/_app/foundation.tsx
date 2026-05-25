@@ -44,7 +44,7 @@ function FoundationPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl mx-auto">
       <div>
         <h1 className="font-display text-4xl md:text-5xl">Foundation</h1>
         <p className="mt-2 text-muted-foreground">The bedrock of your 90 days. Come back here when you forget why you started.</p>
