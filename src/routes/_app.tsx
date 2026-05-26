@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { AppSidebar, MobileNav, MobileTopBar } from "@/components/AppSidebar";
+import { useDailyReminder } from "@/lib/use-daily-reminder";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/_app")({
 function AppLayout() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  useDailyReminder();
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login", replace: true });

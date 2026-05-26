@@ -155,8 +155,11 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
   const [notes, setNotes] = useState<string>(goal.notes ?? "");
   const [target, setTarget] = useState<string | null>(goal.target_date ?? null);
   const [newMilestone, setNewMilestone] = useState("");
+  const [localProgress, setLocalProgress] = useState<number>(goal.progress ?? 0);
 
   useEffect(() => { setMilestones(Array.isArray(goal.milestones) ? goal.milestones : []); }, [goal.milestones]);
+  useEffect(() => { setLocalProgress(goal.progress ?? 0); }, [goal.progress]);
+
 
   const persistMilestones = async (next: Milestone[]) => {
     setMilestones(next);
@@ -194,11 +197,26 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
           </div>
           <Button size="icon" variant="ghost" onClick={onRemove}><Trash2 className="size-4" /></Button>
         </div>
-        <div>
-          <div className="flex justify-between text-xs text-muted-foreground"><span>Progress</span><span>{goal.progress}%</span></div>
-          <Progress value={goal.progress} className="mt-1 h-2" />
-          <Slider className="mt-3" value={[goal.progress]} max={100} step={5} onValueChange={(v) => onProgress(v[0])} />
+        <div className="space-y-2">
+          <div className="flex items-baseline justify-between">
+            <span className="text-xs uppercase tracking-wider text-muted-foreground">Progress</span>
+            <span className="font-display text-2xl tabular-nums bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{localProgress}%</span>
+          </div>
+          <div className="relative h-2.5 rounded-full bg-secondary overflow-hidden">
+            <div
+              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary to-accent transition-[width] duration-300 ease-out"
+              style={{ width: `${localProgress}%` }}
+            />
+          </div>
+          <Slider
+            value={[localProgress]}
+            max={100}
+            step={5}
+            onValueChange={(v) => setLocalProgress(v[0])}
+            onValueCommit={(v) => onProgress(v[0])}
+          />
         </div>
+
         <div className="flex items-center justify-between text-xs">
           <span className="text-muted-foreground">{target ? `🎯 ${target}` : "No target date"}</span>
           <span className="text-muted-foreground">{milestones.filter((m) => m.done).length}/{milestones.length} milestones</span>
