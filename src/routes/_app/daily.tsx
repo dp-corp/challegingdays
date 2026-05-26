@@ -10,8 +10,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, Flame } from "lucide-react";
 import { toast } from "sonner";
-import { todayISO } from "@/lib/challenge";
+import { todayISO, challengeDay } from "@/lib/challenge";
 import { format, subDays } from "date-fns";
+import { maybeAwardBadges } from "@/lib/badges";
+
 
 export const Route = createFileRoute("/_app/daily")({
   component: DailyPage,
