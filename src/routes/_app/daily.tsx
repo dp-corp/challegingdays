@@ -91,7 +91,18 @@ function DailyPage() {
       const habitsScore = Math.round((done / total) * 100);
       await supabase.from("scores").upsert({ user_id: uid, score_date: date, habits_score: habitsScore, daily_score: habitsScore }, { onConflict: "user_id,score_date" });
       qc.invalidateQueries({ queryKey: ["scores-30", uid] });
+
+      // Award badges
+      const { data: allScores } = await supabase.from("scores").select("score_date, daily_score").eq("user_id", uid);
+      const { data: profile } = await supabase.from("profiles").select("challenge_start_date").eq("id", uid).maybeSingle();
+      const dayNum = profile?.challenge_start_date ? challengeDay(profile.challenge_start_date) : undefined;
+      const awarded = await maybeAwardBadges(uid, (allScores ?? []).map((s) => ({ date: s.score_date, score: s.daily_score })), dayNum);
+      if (awarded.length) {
+        awarded.forEach((a) => toast.success(`🏆 Badge earned: ${a.title}`));
+        qc.invalidateQueries({ queryKey: ["achievements", uid] });
+      }
     }
+
   };
 
   const remove = async (id: string) => {
