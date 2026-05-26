@@ -44,7 +44,7 @@ function NavLinks({ onClick }: { onClick?: () => void }) {
 export function AppSidebar() {
   const { signOut } = useAuth();
   return (
-    <aside className="hidden md:flex w-60 shrink-0 flex-col border-r bg-sidebar/60 backdrop-blur">
+    <aside className="hidden md:flex w-60 shrink-0 flex-col border-r bg-sidebar/60 backdrop-blur sticky top-0 h-screen overflow-y-auto">
       <div className="flex items-center gap-2 px-5 py-5">
         <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-accent" />
         <div className="leading-tight">
