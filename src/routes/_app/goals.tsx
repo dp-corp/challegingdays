@@ -155,8 +155,11 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
   const [notes, setNotes] = useState<string>(goal.notes ?? "");
   const [target, setTarget] = useState<string | null>(goal.target_date ?? null);
   const [newMilestone, setNewMilestone] = useState("");
+  const [localProgress, setLocalProgress] = useState<number>(goal.progress ?? 0);
 
   useEffect(() => { setMilestones(Array.isArray(goal.milestones) ? goal.milestones : []); }, [goal.milestones]);
+  useEffect(() => { setLocalProgress(goal.progress ?? 0); }, [goal.progress]);
+
 
   const persistMilestones = async (next: Milestone[]) => {
     setMilestones(next);
