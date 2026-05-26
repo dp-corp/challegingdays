@@ -105,8 +105,14 @@ function ProjectsPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
-          <Link key={p.id} to="/projects/$projectId" params={{ projectId: p.id }} className="block">
-            <Card className="h-full hover:border-primary/40 transition">
+          <Link
+            key={p.id}
+            to="/projects/$projectId"
+            params={{ projectId: p.id }}
+            preload="intent"
+            className="block group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
+          >
+            <Card className="h-full group-hover:border-primary/50 group-hover:shadow-lg transition cursor-pointer">
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="text-[10px] uppercase tracking-widest text-accent">{priorities.find((x) => x.value === p.priority)?.label ?? p.priority}</div>
@@ -114,14 +120,20 @@ function ProjectsPage() {
                 </div>
                 <h3 className="font-display text-2xl">{p.name}</h3>
                 {p.description && <p className="text-sm text-muted-foreground line-clamp-2">{p.description}</p>}
-                <Progress value={p.progress} className="h-1.5" />
-                <div className="text-xs text-muted-foreground">{p.progress}% complete</div>
+                <div className="relative h-2 rounded-full bg-secondary overflow-hidden">
+                  <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary to-accent transition-all" style={{ width: `${p.progress ?? 0}%` }} />
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">{p.progress ?? 0}% complete</span>
+                  <span className="text-primary group-hover:underline">Open project →</span>
+                </div>
               </CardContent>
             </Card>
           </Link>
         ))}
         {projects.length === 0 && <p className="text-sm text-muted-foreground text-center md:col-span-2 lg:col-span-3">No projects yet. Add one to start shipping.</p>}
       </div>
+
     </div>
   );
 }
