@@ -25,8 +25,23 @@ function LoginPage() {
   const [phone, setPhone] = useState("");
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [showPw, setShowPw] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
+
+  const PwField = () => (
+    <div>
+      <Label>Password</Label>
+      <div className="relative">
+        <Input type={showPw ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" />
+        <button type="button" onClick={() => setShowPw((v) => !v)}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          aria-label={showPw ? "Hide password" : "Show password"}>
+          {showPw ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+        </button>
+      </div>
+    </div>
+  );
 
   // Prefill remembered email
   useEffect(() => {
