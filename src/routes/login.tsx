@@ -29,7 +29,7 @@ function LoginPage() {
   const [forgotOpen, setForgotOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
 
-  const PwField = () => (
+  const pwField = (
     <div>
       <Label>Password</Label>
       <div className="relative">
