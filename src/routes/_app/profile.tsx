@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { LogOut, Download, Bell, Moon, Upload, Palette, Check } from "lucide-react";
+import { LogOut, Download, Bell, Moon, Upload, Palette, Check, KeyRound } from "lucide-react";
 import { DatePicker } from "@/components/DatePicker";
 
 export const Route = createFileRoute("/_app/profile")({
