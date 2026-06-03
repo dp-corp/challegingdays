@@ -137,7 +137,7 @@ function LoginPage() {
               <div><Label>Name</Label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
               <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               <div><Label>Phone (optional)</Label><Input type="tel" placeholder="+1 555 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
-              <div><Label>Password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
+              {pwField}
               <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
                 <Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} /> Remember me on this device
               </label>
