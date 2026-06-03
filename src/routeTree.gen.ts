@@ -15,13 +15,13 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppReflectionsRouteImport } from './routes/_app/reflections'
-import { Route as AppProjectsRouteImport } from './routes/_app/projects'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppGoalsRouteImport } from './routes/_app/goals'
 import { Route as AppFoundationRouteImport } from './routes/_app/foundation'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppDailyRouteImport } from './routes/_app/daily'
 import { Route as AppAnalyticsRouteImport } from './routes/_app/analytics'
+import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects.index'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects.$projectId'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -51,11 +51,6 @@ const AppReviewRoute = AppReviewRouteImport.update({
 const AppReflectionsRoute = AppReflectionsRouteImport.update({
   id: '/reflections',
   path: '/reflections',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppProjectsRoute = AppProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProfileRoute = AppProfileRouteImport.update({
@@ -88,10 +83,15 @@ const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AppRoute,
 } as any)
+const AppProjectsIndexRoute = AppProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => AppProjectsRoute,
+  id: '/projects/$projectId',
+  path: '/projects/$projectId',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -104,10 +104,10 @@ export interface FileRoutesByFullPath {
   '/foundation': typeof AppFoundationRoute
   '/goals': typeof AppGoalsRoute
   '/profile': typeof AppProfileRoute
-  '/projects': typeof AppProjectsRouteWithChildren
   '/reflections': typeof AppReflectionsRoute
   '/review': typeof AppReviewRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
+  '/projects/': typeof AppProjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -119,10 +119,10 @@ export interface FileRoutesByTo {
   '/foundation': typeof AppFoundationRoute
   '/goals': typeof AppGoalsRoute
   '/profile': typeof AppProfileRoute
-  '/projects': typeof AppProjectsRouteWithChildren
   '/reflections': typeof AppReflectionsRoute
   '/review': typeof AppReviewRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
+  '/projects': typeof AppProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,10 +136,10 @@ export interface FileRoutesById {
   '/_app/foundation': typeof AppFoundationRoute
   '/_app/goals': typeof AppGoalsRoute
   '/_app/profile': typeof AppProfileRoute
-  '/_app/projects': typeof AppProjectsRouteWithChildren
   '/_app/reflections': typeof AppReflectionsRoute
   '/_app/review': typeof AppReviewRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
+  '/_app/projects/': typeof AppProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,10 +153,10 @@ export interface FileRouteTypes {
     | '/foundation'
     | '/goals'
     | '/profile'
-    | '/projects'
     | '/reflections'
     | '/review'
     | '/projects/$projectId'
+    | '/projects/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -168,10 +168,10 @@ export interface FileRouteTypes {
     | '/foundation'
     | '/goals'
     | '/profile'
-    | '/projects'
     | '/reflections'
     | '/review'
     | '/projects/$projectId'
+    | '/projects'
   id:
     | '__root__'
     | '/'
@@ -184,10 +184,10 @@ export interface FileRouteTypes {
     | '/_app/foundation'
     | '/_app/goals'
     | '/_app/profile'
-    | '/_app/projects'
     | '/_app/reflections'
     | '/_app/review'
     | '/_app/projects/$projectId'
+    | '/_app/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -241,13 +241,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReflectionsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/projects': {
-      id: '/_app/projects'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof AppProjectsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/profile': {
       id: '/_app/profile'
       path: '/profile'
@@ -290,27 +283,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAnalyticsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/projects/': {
+      id: '/_app/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof AppProjectsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/projects/$projectId': {
       id: '/_app/projects/$projectId'
-      path: '/$projectId'
+      path: '/projects/$projectId'
       fullPath: '/projects/$projectId'
       preLoaderRoute: typeof AppProjectsProjectIdRouteImport
-      parentRoute: typeof AppProjectsRoute
+      parentRoute: typeof AppRoute
     }
   }
 }
-
-interface AppProjectsRouteChildren {
-  AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
-}
-
-const AppProjectsRouteChildren: AppProjectsRouteChildren = {
-  AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
-}
-
-const AppProjectsRouteWithChildren = AppProjectsRoute._addFileChildren(
-  AppProjectsRouteChildren,
-)
 
 interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
@@ -319,9 +307,10 @@ interface AppRouteChildren {
   AppFoundationRoute: typeof AppFoundationRoute
   AppGoalsRoute: typeof AppGoalsRoute
   AppProfileRoute: typeof AppProfileRoute
-  AppProjectsRoute: typeof AppProjectsRouteWithChildren
   AppReflectionsRoute: typeof AppReflectionsRoute
   AppReviewRoute: typeof AppReviewRoute
+  AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
+  AppProjectsIndexRoute: typeof AppProjectsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -331,9 +320,10 @@ const AppRouteChildren: AppRouteChildren = {
   AppFoundationRoute: AppFoundationRoute,
   AppGoalsRoute: AppGoalsRoute,
   AppProfileRoute: AppProfileRoute,
-  AppProjectsRoute: AppProjectsRouteWithChildren,
   AppReflectionsRoute: AppReflectionsRoute,
   AppReviewRoute: AppReviewRoute,
+  AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
+  AppProjectsIndexRoute: AppProjectsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -347,3 +337,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
