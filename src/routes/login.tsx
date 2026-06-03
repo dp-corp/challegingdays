@@ -90,14 +90,14 @@ function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8">
       <div className="w-full max-w-sm">
-        <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="size-4" /> Back to home
-        </Link>
         <Link to="/" className="mb-8 flex items-center justify-center gap-2">
           <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-accent" />
           <span className="font-display text-xl">90-Day Life OS</span>
         </Link>
         <div className="glass rounded-2xl p-6 sm:p-8">
+          <Link to="/" className="mb-4 flex items-center justify-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="size-4" /> Back to home
+          </Link>
           <h1 className="font-display text-2xl sm:text-3xl text-center">Begin your 90 days</h1>
           <p className="mt-1 text-center text-sm text-muted-foreground">Sign in or create an account.</p>
 
