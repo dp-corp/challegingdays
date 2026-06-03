@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
@@ -21,6 +22,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
@@ -59,13 +61,14 @@ function LoginPage() {
   };
 
   const signUp = async () => {
+    if (phone && !/^\+?[0-9\s\-()]{7,20}$/.test(phone)) return toast.error("Enter a valid phone number");
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
-        data: { full_name: name },
+        data: { full_name: name, phone },
       },
     });
     setBusy(false);
