@@ -230,8 +230,16 @@ function ProfilePage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Account</CardTitle></CardHeader>
-        <CardContent>
+        <CardHeader><CardTitle>Account</CardTitle><CardDescription>Reset your password or sign out.</CardDescription></CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={async () => {
+            if (!user?.email) return;
+            const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+              redirectTo: `${window.location.origin}/reset-password`,
+            });
+            if (error) return toast.error(error.message);
+            toast.success("Password reset link sent to your email.");
+          }}><KeyRound className="size-4 mr-2" />Reset password</Button>
           <Button variant="outline" onClick={() => signOut()}><LogOut className="size-4 mr-2" />Sign out</Button>
         </CardContent>
       </Card>
