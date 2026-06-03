@@ -111,7 +111,10 @@ function ProjectDetail() {
                 <div><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
                 <div><Label>Description</Label><Textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
                 <div><Label>Due date</Label><DatePicker value={form.due_date} onChange={(v) => setForm({ ...form, due_date: v })} /></div>
-                <Button onClick={addTask} className="w-full">Add task</Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1" onClick={() => { setForm(blank); setOpen(false); }}>Cancel</Button>
+                  <Button onClick={addTask} className="flex-1">Add task</Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
