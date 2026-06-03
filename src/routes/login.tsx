@@ -123,7 +123,7 @@ function LoginPage() {
             </TabsList>
             <TabsContent value="signin" className="space-y-3 pt-4">
               <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-              <div><Label>Password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
+              {pwField}
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
                   <Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} /> Remember me
