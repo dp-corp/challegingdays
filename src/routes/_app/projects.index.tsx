@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { DatePicker } from "@/components/DatePicker";
 import { SelectWithAdd, type SelectOption } from "@/components/SelectWithAdd";
 
-export const Route = createFileRoute("/_app/projects")({
+export const Route = createFileRoute("/_app/projects/")({
   component: ProjectsPage,
   head: () => ({ meta: [{ title: "Projects — 90-Day Life OS" }] }),
 });

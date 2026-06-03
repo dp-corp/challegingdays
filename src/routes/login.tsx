@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
@@ -21,6 +22,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
@@ -59,13 +61,14 @@ function LoginPage() {
   };
 
   const signUp = async () => {
+    if (phone && !/^\+?[0-9\s\-()]{7,20}$/.test(phone)) return toast.error("Enter a valid phone number");
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
-        data: { full_name: name },
+        data: { full_name: name, phone },
       },
     });
     setBusy(false);
@@ -85,8 +88,11 @@ function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8">
       <div className="w-full max-w-sm">
+        <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="size-4" /> Back to home
+        </Link>
         <Link to="/" className="mb-8 flex items-center justify-center gap-2">
           <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-accent" />
           <span className="font-display text-xl">90-Day Life OS</span>
@@ -115,6 +121,7 @@ function LoginPage() {
             <TabsContent value="signup" className="space-y-3 pt-4">
               <div><Label>Name</Label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
               <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+              <div><Label>Phone (optional)</Label><Input type="tel" placeholder="+1 555 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
               <div><Label>Password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
               <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
                 <Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} /> Remember me on this device
