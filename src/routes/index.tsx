@@ -35,7 +35,9 @@ function Landing() {
 
       <section className="container mx-auto flex-1 px-5 pt-10 pb-16 text-center max-w-2xl flex flex-col items-center justify-center">
         <h1 className="font-display text-4xl sm:text-6xl leading-[1.05]">
-          Transform your life in <span className="gradient-text italic">90 days.</span>
+          Transform your life
+          <br />
+          <span className="gradient-text italic">in 90 days.</span>
         </h1>
         <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-md">
           A simple, focused system for goals, habits, projects, and reflection — built for ambitious lives.
