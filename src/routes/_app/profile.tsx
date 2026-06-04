@@ -11,7 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { LogOut, Download, Bell, Moon, Upload, Palette, Check, KeyRound } from "lucide-react";
+import { LogOut, Download, Bell, Moon, Upload, Palette, Check, KeyRound, RotateCcw } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { DatePicker } from "@/components/DatePicker";
 
 export const Route = createFileRoute("/_app/profile")({
