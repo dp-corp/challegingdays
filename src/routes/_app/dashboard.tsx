@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { challengeDay, challengeProgress, gradeFor, todayISO, weekStartISO, CHALLENGE_DAYS } from "@/lib/challenge";
+import { maybeAwardBadges } from "@/lib/badges";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flame, Target, TrendingUp, Trophy, Calendar } from "lucide-react";
@@ -70,6 +73,19 @@ function Dashboard() {
   const start = profileQ.data?.challenge_start_date ?? todayISO();
   const day = challengeDay(start);
   const progress = challengeProgress(start);
+
+  const qc = useQueryClient();
+  useEffect(() => {
+    if (!profileQ.data || !scoresQ.data) return;
+    (async () => {
+      const awarded = await maybeAwardBadges(uid, scoresQ.data!.map((s) => ({ date: s.score_date, score: s.daily_score })), day);
+      if (awarded.length) {
+        awarded.forEach((a) => toast.success(`🏆 Badge earned: ${a.title}`));
+        qc.invalidateQueries({ queryKey: ["achievements", uid] });
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileQ.data?.challenge_start_date, scoresQ.data?.length]);
 
   const today = scoresQ.data?.find((s) => s.score_date === todayISO());
   const weekStart = weekStartISO();
