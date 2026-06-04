@@ -265,7 +265,7 @@ function ProfilePage() {
                   for (const t of tables) {
                     await supabase.from(t as any).delete().eq("user_id", uid);
                   }
-                  await supabase.from("profiles").update({ challenge_start_date: null, updated_at: new Date().toISOString() }).eq("id", uid);
+                  await supabase.from("profiles").update({ challenge_start_date: undefined, updated_at: new Date().toISOString() }).eq("id", uid);
                   localStorage.removeItem("bio");
                   toast.success("Account reset. Starting fresh.");
                   setTimeout(() => window.location.assign("/dashboard"), 600);
