@@ -31,7 +31,7 @@ function currentStreak(scores: Score[]) {
 
 export async function maybeAwardBadges(uid: string, scores: Score[], dayNumber?: number) {
   const codes = new Set<string>();
-  if (scores.length >= 1) codes.add("day_1");
+  if (scores.length >= 1 || (dayNumber && dayNumber >= 1)) codes.add("day_1");
   if (scores.length >= 10) codes.add("ten_days");
   if (scores.some((s) => s.score >= 100)) codes.add("perfect_day");
   const streak = currentStreak(scores);
