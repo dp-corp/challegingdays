@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/foundation")({
   component: FoundationPage,
-  head: () => ({ meta: [{ title: "Foundation — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Foundation - 90-Day Life OS" }] }),
 });
 
 function FoundationPage() {

@@ -14,7 +14,7 @@ import { todayISO } from "@/lib/challenge";
 
 export const Route = createFileRoute("/_app/analytics")({
   component: AnalyticsPage,
-  head: () => ({ meta: [{ title: "Analytics — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Analytics - 90-Day Life OS" }] }),
 });
 
 function AnalyticsPage() {
@@ -127,7 +127,7 @@ function AnalyticsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Stat icon={<TrendingUp className="size-4" />} label="Avg score" value={`${avg}`} />
         <Stat icon={<Flame className="size-4 text-accent" />} label="Best streak" value={`${longest}d`} />
-        <Stat icon={<Calendar className="size-4" />} label="Best day" value={best ? `${best.daily_score}` : "—"} sub={best ? format(new Date(best.score_date), "MMM d") : undefined} />
+        <Stat icon={<Calendar className="size-4" />} label="Best day" value={best ? `${best.daily_score}` : "-"} sub={best ? format(new Date(best.score_date), "MMM d") : undefined} />
         <Stat icon={<Target className="size-4 text-primary" />} label="Tasks done" value={`${completedTasks}/${totalTasks}`} />
       </div>
 

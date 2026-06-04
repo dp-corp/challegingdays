@@ -17,7 +17,7 @@ import { maybeAwardBadges } from "@/lib/badges";
 
 export const Route = createFileRoute("/_app/daily")({
   component: DailyPage,
-  head: () => ({ meta: [{ title: "Daily Tracker — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Daily Tracker - 90-Day Life OS" }] }),
 });
 
 const DEFAULT_HABITS = [

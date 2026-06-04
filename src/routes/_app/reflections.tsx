@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/reflections")({
   component: ReflectionsPage,
-  head: () => ({ meta: [{ title: "Reflections — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Reflections - 90-Day Life OS" }] }),
 });
 
 const PROMPTS = [

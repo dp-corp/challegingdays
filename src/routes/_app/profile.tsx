@@ -11,12 +11,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { LogOut, Download, Bell, Moon, Upload, Palette, Check, KeyRound } from "lucide-react";
+import { LogOut, Download, Bell, Moon, Upload, Palette, Check, KeyRound, RotateCcw } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { DatePicker } from "@/components/DatePicker";
 
 export const Route = createFileRoute("/_app/profile")({
   component: ProfilePage,
-  head: () => ({ meta: [{ title: "Profile & Settings — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Profile & Settings - 90-Day Life OS" }] }),
 });
 
 const THEMES: { name: string; primary: string; accent: string }[] = [
@@ -230,7 +234,7 @@ function ProfilePage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Account</CardTitle><CardDescription>Reset your password or sign out.</CardDescription></CardHeader>
+        <CardHeader><CardTitle>Account</CardTitle><CardDescription>Reset password, wipe data, or sign out.</CardDescription></CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={async () => {
             if (!user?.email) return;
@@ -240,9 +244,40 @@ function ProfilePage() {
             if (error) return toast.error(error.message);
             toast.success("Password reset link sent to your email.");
           }}><KeyRound className="size-4 mr-2" />Reset password</Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="text-destructive hover:text-destructive">
+                <RotateCcw className="size-4 mr-2" />Reset account
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset your account?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently deletes all your goals, projects, tasks, habits, logs, reflections, reviews, foundation, scores, and badges. Your login stays. This cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={async () => {
+                  const tables = ["tasks","projects","goals","habit_logs","habits","reflections","weekly_reviews","scores","achievements","foundation"] as const;
+                  for (const t of tables) {
+                    await supabase.from(t as any).delete().eq("user_id", uid);
+                  }
+                  await supabase.from("profiles").update({ challenge_start_date: undefined, updated_at: new Date().toISOString() }).eq("id", uid);
+                  localStorage.removeItem("bio");
+                  toast.success("Account reset. Starting fresh.");
+                  setTimeout(() => window.location.assign("/dashboard"), 600);
+                }}>Reset everything</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
           <Button variant="outline" onClick={() => signOut()}><LogOut className="size-4 mr-2" />Sign out</Button>
         </CardContent>
       </Card>
+
     </div>
   );
 }

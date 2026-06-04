@@ -17,7 +17,7 @@ import { SelectWithAdd, type SelectOption } from "@/components/SelectWithAdd";
 
 export const Route = createFileRoute("/_app/projects/")({
   component: ProjectsPage,
-  head: () => ({ meta: [{ title: "Projects — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Projects - 90-Day Life OS" }] }),
 });
 
 const DEFAULT_PRIORITIES: SelectOption[] = [
@@ -62,7 +62,7 @@ function ProjectsPage() {
     if (error) return toast.error(error.message);
     setOpen(false); setForm(blank);
     qc.invalidateQueries({ queryKey: ["projects", uid] });
-    toast.success("Project created — open it to add tasks");
+    toast.success("Project created - open it to add tasks");
   };
 
   const projects = q.data ?? [];

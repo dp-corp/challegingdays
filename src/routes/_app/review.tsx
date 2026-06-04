@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/review")({
   component: ReviewPage,
-  head: () => ({ meta: [{ title: "Weekly Review — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Weekly Review - 90-Day Life OS" }] }),
 });
 
 function ReviewPage() {
@@ -88,7 +88,7 @@ function ReviewPage() {
           <Field label="Energy (1-10)"><Input type="number" min={1} max={10} value={f.energy_level} onChange={(e) => setF({ ...f, energy_level: e.target.value })} /></Field>
         </div>
 
-        <Section title="Career — major accomplishments"><Textarea rows={2} value={f.career_accomplishments} onChange={(e) => setF({ ...f, career_accomplishments: e.target.value })} /></Section>
+        <Section title="Career - major accomplishments"><Textarea rows={2} value={f.career_accomplishments} onChange={(e) => setF({ ...f, career_accomplishments: e.target.value })} /></Section>
 
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Income earned"><Input type="number" step="0.01" value={f.income_earned} onChange={(e) => setF({ ...f, income_earned: e.target.value })} /></Field>

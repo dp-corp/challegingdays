@@ -20,7 +20,7 @@ import { SelectWithAdd, type SelectOption } from "@/components/SelectWithAdd";
 
 export const Route = createFileRoute("/_app/goals")({
   component: GoalsPage,
-  head: () => ({ meta: [{ title: "Goals — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Goals - 90-Day Life OS" }] }),
 });
 
 const DEFAULT_CATEGORIES: SelectOption[] = [

@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
   component: Landing,
   head: () => ({
     meta: [
-      { title: "90-Day Life OS — Your operating system for transformation" },
+      { title: "90-Day Life OS - Your operating system for transformation" },
       { name: "description", content: "Set goals, build habits, run projects, and reflect daily. A simple 90-day system for ambitious people." },
       { property: "og:title", content: "90-Day Life OS" },
       { property: "og:description", content: "Your operating system for the next 90 days." },
@@ -40,7 +40,7 @@ function Landing() {
           <span className="gradient-text italic">in 90 days.</span>
         </h1>
         <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-md">
-          A simple, focused system for goals, habits, projects, and reflection — built for ambitious lives.
+          A simple, focused system for goals, habits, projects, and reflection - built for ambitious lives.
         </p>
         <Link to="/login" className="mt-8">
           <Button size="lg" className="h-12 px-7 text-base">
