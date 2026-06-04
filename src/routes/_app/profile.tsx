@@ -176,7 +176,14 @@ function ProfilePage() {
           <div className="grid gap-3 sm:grid-cols-2">
             <div><Label>Display name</Label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
             <div><Label>Avatar URL</Label><Input value={avatar} onChange={(e) => setAvatar(e.target.value)} placeholder="https://… or upload" /></div>
-            <div><Label>Challenge start date</Label><DatePicker value={start} onChange={setStart} /></div>
+            <div>
+              <Label>Challenge start date (Day 1)</Label>
+              <div className="flex gap-2">
+                <div className="flex-1"><DatePicker value={start} onChange={setStart} /></div>
+                <Button type="button" variant="outline" onClick={() => setStart(new Date().toISOString().slice(0, 10))}>Today</Button>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">Sets where Day 1 of your 90 days begins.</p>
+            </div>
             <div><Label>Email</Label><Input value={user?.email ?? ""} disabled /></div>
           </div>
           <div><Label>Bio</Label><Textarea rows={3} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Why this 90 days matters to you." /></div>
