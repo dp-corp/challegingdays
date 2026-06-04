@@ -72,8 +72,6 @@ function Dashboard() {
 
   const start = profileQ.data?.challenge_start_date ?? todayISO();
   const day = challengeDay(start);
-  const start = profileQ.data?.challenge_start_date ?? todayISO();
-  const day = challengeDay(start);
   const progress = challengeProgress(start);
 
   const qc = useQueryClient();
