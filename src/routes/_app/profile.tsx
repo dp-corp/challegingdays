@@ -16,7 +16,7 @@ import { DatePicker } from "@/components/DatePicker";
 
 export const Route = createFileRoute("/_app/profile")({
   component: ProfilePage,
-  head: () => ({ meta: [{ title: "Profile & Settings — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Profile & Settings - 90-Day Life OS" }] }),
 });
 
 const THEMES: { name: string; primary: string; accent: string }[] = [

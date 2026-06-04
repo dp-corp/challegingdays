@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({ meta: [{ title: "Sign in — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Sign in - 90-Day Life OS" }] }),
 });
 
 function LoginPage() {
@@ -89,7 +89,7 @@ function LoginPage() {
     setBusy(false);
     if (error) return toast.error(error.message);
     persistRemember();
-    toast.success("Account created — check your inbox to confirm.");
+    toast.success("Account created - check your inbox to confirm.");
   };
 
   const sendReset = async () => {
@@ -98,7 +98,7 @@ function LoginPage() {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (error) return toast.error(error.message);
-    toast.success("Reset link sent — check your inbox.");
+    toast.success("Reset link sent - check your inbox.");
     setForgotOpen(false);
   };
 

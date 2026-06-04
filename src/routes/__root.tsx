@@ -54,10 +54,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "90-Day Life OS — Transform your next 90 days" },
+      { title: "90-Day Life OS - Transform your next 90 days" },
       { name: "description", content: "Goals, habits, projects, weekly reviews, and AI-powered reflections. Your operating system for the next 90 days." },
-      { property: "og:title", content: "90-Day Life OS — Transform your next 90 days" },
-      { name: "twitter:title", content: "90-Day Life OS — Transform your next 90 days" },
+      { property: "og:title", content: "90-Day Life OS - Transform your next 90 days" },
+      { name: "twitter:title", content: "90-Day Life OS - Transform your next 90 days" },
       { property: "og:description", content: "Goals, habits, projects, weekly reviews, and AI-powered reflections. Your operating system for the next 90 days." },
       { name: "twitter:description", content: "Goals, habits, projects, weekly reviews, and AI-powered reflections. Your operating system for the next 90 days." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/b7a5b546-2d8d-4f26-90d0-11e1239a8f41" },

@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 type Score = { date: string; score: number };
 
 const BADGES: Record<string, { title: string; description: string }> = {
-  day_1: { title: "Day 1 — Started", description: "You showed up. The hardest part is done." },
+  day_1: { title: "Day 1 - Started", description: "You showed up. The hardest part is done." },
   streak_3: { title: "3-Day Streak", description: "Three days at 70+ in a row." },
   streak_7: { title: "1-Week Streak", description: "Seven days at 70+ in a row." },
   streak_14: { title: "2-Week Streak", description: "Two solid weeks." },

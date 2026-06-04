@@ -11,7 +11,7 @@ import { format, subDays } from "date-fns";
 
 export const Route = createFileRoute("/_app/dashboard")({
   component: Dashboard,
-  head: () => ({ meta: [{ title: "Dashboard — 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Dashboard - 90-Day Life OS" }] }),
 });
 
 function Dashboard() {
@@ -152,7 +152,7 @@ function Dashboard() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Life scores — today</CardTitle></CardHeader>
+          <CardHeader><CardTitle>Life scores - today</CardTitle></CardHeader>
           <CardContent className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <RadialBarChart innerRadius="30%" outerRadius="100%" data={radial} startAngle={90} endAngle={-270}>
@@ -199,7 +199,7 @@ function Dashboard() {
       <Card>
         <CardHeader><CardTitle>Recent achievements</CardTitle></CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          {(achievementsQ.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">Your first badge is waiting — complete day 1.</p>}
+          {(achievementsQ.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">Your first badge is waiting - complete day 1.</p>}
           {(achievementsQ.data ?? []).map((a) => (
             <div key={a.id} className="rounded-full border bg-accent/10 px-3 py-1 text-xs text-accent-foreground">
               🏆 {a.title}
