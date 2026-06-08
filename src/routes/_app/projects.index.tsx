@@ -124,7 +124,7 @@ function ProjectsPage() {
                     <p className="text-xs text-muted-foreground">Tick habits each day toward a streak target.</p>
                   </div>
                 </div>
-                <Switch checked={form.is_recurring} onCheckedChange={(v) => setForm({ ...form, is_recurring: v })} disabled={!!editId} />
+                <Switch checked={form.is_recurring} onCheckedChange={(v) => setForm({ ...form, is_recurring: v })} />
               </div>
               <div><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
               <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
