@@ -16,7 +16,7 @@ import { ArrowLeft, Plus, Trash2, Repeat, Flame, Link as LinkIcon } from "lucide
 import { DatePicker } from "@/components/DatePicker";
 import { toast } from "sonner";
 import { todayISO } from "@/lib/challenge";
-import { format, subDays, differenceInCalendarDays } from "date-fns";
+import { format, subDays } from "date-fns";
 
 export const Route = createFileRoute("/_app/projects/$projectId")({
   component: ProjectDetail,
