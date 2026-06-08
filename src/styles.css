@@ -167,3 +167,9 @@
   }
   .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
 }
+
+@keyframes shimmer {
+  0% { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+

@@ -155,6 +155,7 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          project_id: string | null
           sort_order: number
           target_per_day: number
           user_id: string
@@ -165,6 +166,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          project_id?: string | null
           sort_order?: number
           target_per_day?: number
           user_id: string
@@ -175,11 +177,20 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          project_id?: string | null
           sort_order?: number
           target_per_day?: number
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "habits_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -214,11 +225,13 @@ export type Database = {
           deadline: string | null
           description: string | null
           id: string
+          is_recurring: boolean
           name: string
           notes: string | null
           priority: string
           progress: number
           status: string
+          target_days: number
           updated_at: string
           user_id: string
         }
@@ -227,11 +240,13 @@ export type Database = {
           deadline?: string | null
           description?: string | null
           id?: string
+          is_recurring?: boolean
           name: string
           notes?: string | null
           priority?: string
           progress?: number
           status?: string
+          target_days?: number
           updated_at?: string
           user_id: string
         }
@@ -240,11 +255,13 @@ export type Database = {
           deadline?: string | null
           description?: string | null
           id?: string
+          is_recurring?: boolean
           name?: string
           notes?: string | null
           priority?: string
           progress?: number
           status?: string
+          target_days?: number
           updated_at?: string
           user_id?: string
         }
