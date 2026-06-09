@@ -18,8 +18,10 @@ import { Route as AppReflectionsRouteImport } from './routes/_app/reflections'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppGoalsRouteImport } from './routes/_app/goals'
 import { Route as AppFoundationRouteImport } from './routes/_app/foundation'
+import { Route as AppFinancesRouteImport } from './routes/_app/finances'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppDailyRouteImport } from './routes/_app/daily'
+import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
 import { Route as AppAnalyticsRouteImport } from './routes/_app/analytics'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects.index'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects.$projectId'
@@ -68,6 +70,11 @@ const AppFoundationRoute = AppFoundationRouteImport.update({
   path: '/foundation',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFinancesRoute = AppFinancesRouteImport.update({
+  id: '/finances',
+  path: '/finances',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -76,6 +83,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
 const AppDailyRoute = AppDailyRouteImport.update({
   id: '/daily',
   path: '/daily',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCalendarRoute = AppCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
@@ -99,8 +111,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/analytics': typeof AppAnalyticsRoute
+  '/calendar': typeof AppCalendarRoute
   '/daily': typeof AppDailyRoute
   '/dashboard': typeof AppDashboardRoute
+  '/finances': typeof AppFinancesRoute
   '/foundation': typeof AppFoundationRoute
   '/goals': typeof AppGoalsRoute
   '/profile': typeof AppProfileRoute
@@ -114,8 +128,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/analytics': typeof AppAnalyticsRoute
+  '/calendar': typeof AppCalendarRoute
   '/daily': typeof AppDailyRoute
   '/dashboard': typeof AppDashboardRoute
+  '/finances': typeof AppFinancesRoute
   '/foundation': typeof AppFoundationRoute
   '/goals': typeof AppGoalsRoute
   '/profile': typeof AppProfileRoute
@@ -131,8 +147,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_app/analytics': typeof AppAnalyticsRoute
+  '/_app/calendar': typeof AppCalendarRoute
   '/_app/daily': typeof AppDailyRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/finances': typeof AppFinancesRoute
   '/_app/foundation': typeof AppFoundationRoute
   '/_app/goals': typeof AppGoalsRoute
   '/_app/profile': typeof AppProfileRoute
@@ -148,8 +166,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/analytics'
+    | '/calendar'
     | '/daily'
     | '/dashboard'
+    | '/finances'
     | '/foundation'
     | '/goals'
     | '/profile'
@@ -163,8 +183,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/analytics'
+    | '/calendar'
     | '/daily'
     | '/dashboard'
+    | '/finances'
     | '/foundation'
     | '/goals'
     | '/profile'
@@ -179,8 +201,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/_app/analytics'
+    | '/_app/calendar'
     | '/_app/daily'
     | '/_app/dashboard'
+    | '/_app/finances'
     | '/_app/foundation'
     | '/_app/goals'
     | '/_app/profile'
@@ -262,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFoundationRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/finances': {
+      id: '/_app/finances'
+      path: '/finances'
+      fullPath: '/finances'
+      preLoaderRoute: typeof AppFinancesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
@@ -274,6 +305,13 @@ declare module '@tanstack/react-router' {
       path: '/daily'
       fullPath: '/daily'
       preLoaderRoute: typeof AppDailyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/calendar': {
+      id: '/_app/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof AppCalendarRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/analytics': {
@@ -302,8 +340,10 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
+  AppCalendarRoute: typeof AppCalendarRoute
   AppDailyRoute: typeof AppDailyRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppFinancesRoute: typeof AppFinancesRoute
   AppFoundationRoute: typeof AppFoundationRoute
   AppGoalsRoute: typeof AppGoalsRoute
   AppProfileRoute: typeof AppProfileRoute
@@ -315,8 +355,10 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
+  AppCalendarRoute: AppCalendarRoute,
   AppDailyRoute: AppDailyRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppFinancesRoute: AppFinancesRoute,
   AppFoundationRoute: AppFoundationRoute,
   AppGoalsRoute: AppGoalsRoute,
   AppProfileRoute: AppProfileRoute,
