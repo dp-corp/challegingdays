@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Compass, Target, ListChecks, Kanban, ClipboardCheck, Sparkles, BarChart3, User, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Compass, Target, ListChecks, Kanban, ClipboardCheck, Sparkles, BarChart3, User, LogOut, Menu, DollarSign, CalendarDays } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet";
@@ -10,6 +10,8 @@ const items = [
   { to: "/goals", icon: Target, label: "Goals" },
   { to: "/daily", icon: ListChecks, label: "Daily" },
   { to: "/projects", icon: Kanban, label: "Projects" },
+  { to: "/calendar", icon: CalendarDays, label: "Calendar" },
+  { to: "/finances", icon: DollarSign, label: "Finances" },
   { to: "/review", icon: ClipboardCheck, label: "Review" },
   { to: "/reflections", icon: Sparkles, label: "Reflect" },
   { to: "/analytics", icon: BarChart3, label: "Analytics" },
