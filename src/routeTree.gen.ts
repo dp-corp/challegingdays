@@ -25,6 +25,7 @@ import { Route as AppCalendarRouteImport } from './routes/_app/calendar'
 import { Route as AppAnalyticsRouteImport } from './routes/_app/analytics'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects.index'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects.$projectId'
+import { Route as AppJoinTokenRouteImport } from './routes/_app/join.$token'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -105,6 +106,11 @@ const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
   path: '/projects/$projectId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppJoinTokenRoute = AppJoinTokenRouteImport.update({
+  id: '/join/$token',
+  path: '/join/$token',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/reflections': typeof AppReflectionsRoute
   '/review': typeof AppReviewRoute
+  '/join/$token': typeof AppJoinTokenRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/projects/': typeof AppProjectsIndexRoute
 }
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/reflections': typeof AppReflectionsRoute
   '/review': typeof AppReviewRoute
+  '/join/$token': typeof AppJoinTokenRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/projects': typeof AppProjectsIndexRoute
 }
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/reflections': typeof AppReflectionsRoute
   '/_app/review': typeof AppReviewRoute
+  '/_app/join/$token': typeof AppJoinTokenRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
 }
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/reflections'
     | '/review'
+    | '/join/$token'
     | '/projects/$projectId'
     | '/projects/'
   fileRoutesByTo: FileRoutesByTo
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/reflections'
     | '/review'
+    | '/join/$token'
     | '/projects/$projectId'
     | '/projects'
   id:
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/reflections'
     | '/_app/review'
+    | '/_app/join/$token'
     | '/_app/projects/$projectId'
     | '/_app/projects/'
   fileRoutesById: FileRoutesById
@@ -335,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsProjectIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/join/$token': {
+      id: '/_app/join/$token'
+      path: '/join/$token'
+      fullPath: '/join/$token'
+      preLoaderRoute: typeof AppJoinTokenRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -349,6 +368,7 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppReflectionsRoute: typeof AppReflectionsRoute
   AppReviewRoute: typeof AppReviewRoute
+  AppJoinTokenRoute: typeof AppJoinTokenRoute
   AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
   AppProjectsIndexRoute: typeof AppProjectsIndexRoute
 }
@@ -364,6 +384,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppReflectionsRoute: AppReflectionsRoute,
   AppReviewRoute: AppReviewRoute,
+  AppJoinTokenRoute: AppJoinTokenRoute,
   AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
   AppProjectsIndexRoute: AppProjectsIndexRoute,
 }

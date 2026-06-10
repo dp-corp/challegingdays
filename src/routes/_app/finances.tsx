@@ -39,6 +39,16 @@ function Finances() {
   const [category, setCategory] = useState("general");
   const [note, setNote] = useState("");
   const [date, setDate] = useState<string | null>(format(new Date(), "yyyy-MM-dd"));
+  const [openingDraft, setOpeningDraft] = useState<string>("");
+
+  const profileQ = useQuery({
+    queryKey: ["profile", uid],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("opening_balance").eq("id", uid).maybeSingle();
+      return (data as any) ?? { opening_balance: 0 };
+    },
+  });
+  const opening = Number(profileQ.data?.opening_balance ?? 0);
 
   const entriesQ = useQuery({
     queryKey: ["finance", uid],
@@ -52,6 +62,17 @@ function Finances() {
       if (error) throw error;
       return (data ?? []) as unknown as Entry[];
     },
+  });
+
+  const saveOpening = useMutation({
+    mutationFn: async () => {
+      const v = parseFloat(openingDraft);
+      if (Number.isNaN(v)) throw new Error("Enter a number");
+      const { error } = await supabase.from("profiles").update({ opening_balance: v } as any).eq("id", uid);
+      if (error) throw error;
+    },
+    onSuccess: () => { setOpeningDraft(""); qc.invalidateQueries({ queryKey: ["profile", uid] }); toast.success("Opening balance saved"); },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const add = useMutation({
