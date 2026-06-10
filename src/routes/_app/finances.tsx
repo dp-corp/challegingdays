@@ -150,6 +150,18 @@ function Finances() {
       </div>
 
       <Card>
+        <CardHeader><CardTitle className="text-base">Opening balance</CardTitle></CardHeader>
+        <CardContent className="flex flex-wrap items-end gap-3">
+          <div className="flex-1 min-w-[160px]">
+            <Label className="text-xs">Current balance to start tracking from</Label>
+            <Input type="number" step="0.01" placeholder={opening.toFixed(2)} value={openingDraft} onChange={(e) => setOpeningDraft(e.target.value)} />
+          </div>
+          <Button variant="outline" onClick={() => saveOpening.mutate()} disabled={saveOpening.isPending || openingDraft === ""}>Save</Button>
+          <div className="text-xs text-muted-foreground w-full sm:w-auto">Currently: <span className="font-mono">${opening.toFixed(2)}</span></div>
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader><CardTitle className="text-base">This month</CardTitle></CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-3 text-sm">
           <div><div className="text-muted-foreground">Income</div><div className="font-display text-2xl text-emerald-500">${totals.mIncome.toFixed(2)}</div></div>
