@@ -265,7 +265,7 @@ function DailyPage() {
 }
 
 function CategoryCard({ cat, items, done, onToggle, onRemove, onRename, onLink, projects, projectName, consistency30 }: any) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const completed = items.filter((h: any) => done.has(h.id)).length;
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
