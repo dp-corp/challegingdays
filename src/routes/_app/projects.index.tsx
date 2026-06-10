@@ -42,7 +42,7 @@ function ProjectsPage() {
   const qc = useQueryClient();
   const q = useQuery({
     queryKey: ["projects", uid],
-    queryFn: async () => (await supabase.from("projects").select("*").eq("user_id", uid).order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("projects").select("*").order("created_at", { ascending: false })).data ?? [],
   });
 
   const [priorities, setPriorities] = useState<SelectOption[]>(DEFAULT_PRIORITIES);

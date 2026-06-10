@@ -55,7 +55,7 @@ function DailyPage() {
 
   const projectsQ = useQuery({
     queryKey: ["projects", uid],
-    queryFn: async () => (await supabase.from("projects").select("id,name,is_recurring").eq("user_id", uid)).data ?? [],
+    queryFn: async () => (await supabase.from("projects").select("id,name,is_recurring")).data ?? [],
   });
 
   const logsQ = useQuery({
