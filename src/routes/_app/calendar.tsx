@@ -68,15 +68,15 @@ function CalendarPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-        <Card>
-          <CardContent className="p-2">
+        <Card className="w-full lg:w-auto">
+          <CardContent className="p-2 flex justify-center">
             <Calendar
               mode="single"
               selected={selected}
               onSelect={(d) => d && setSelected(d)}
               modifiers={modifiers}
               modifiersClassNames={{ hasItems: "relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:size-1 after:rounded-full after:bg-primary" }}
-              className="p-2 pointer-events-auto"
+              className="p-2 pointer-events-auto w-full max-w-full [&_table]:w-full [&_td]:p-0 [&_th]:p-0"
             />
           </CardContent>
         </Card>

@@ -140,9 +140,9 @@ function Dashboard() {
 
       <div className="grid gap-4 md:grid-cols-4">
         <Stat icon={<TrendingUp className="size-4" />} label="Today" value={`${today?.daily_score ?? 0}`} sub={<span className={grade.color}>Grade {grade.grade}</span>} />
-        <Stat icon={<TrendingUp className="size-4" />} label="This week" value={`${weekAvg}`} sub={`${weekScores.length} days logged`} />
         <Stat icon={<Flame className="size-4 text-accent" />} label="Current streak" value={`${streak}`} sub="days ≥ 70" />
         <Stat icon={<Trophy className="size-4 text-accent" />} label="Longest streak" value={`${longest}`} sub="days" />
+        <Stat icon={<Target className="size-4 text-primary" />} label="Goals" value={`${(goalsQ.data ?? []).length}`} sub={`${Math.round(((goalsQ.data ?? []).reduce((a, g: any) => a + (g.progress || 0), 0)) / Math.max(1, (goalsQ.data ?? []).length))}% avg progress`} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">

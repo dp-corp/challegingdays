@@ -39,6 +39,16 @@ function Finances() {
   const [category, setCategory] = useState("general");
   const [note, setNote] = useState("");
   const [date, setDate] = useState<string | null>(format(new Date(), "yyyy-MM-dd"));
+  const [openingDraft, setOpeningDraft] = useState<string>("");
+
+  const profileQ = useQuery({
+    queryKey: ["profile", uid],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("opening_balance").eq("id", uid).maybeSingle();
+      return (data as any) ?? { opening_balance: 0 };
+    },
+  });
+  const opening = Number(profileQ.data?.opening_balance ?? 0);
 
   const entriesQ = useQuery({
     queryKey: ["finance", uid],
@@ -52,6 +62,17 @@ function Finances() {
       if (error) throw error;
       return (data ?? []) as unknown as Entry[];
     },
+  });
+
+  const saveOpening = useMutation({
+    mutationFn: async () => {
+      const v = parseFloat(openingDraft);
+      if (Number.isNaN(v)) throw new Error("Enter a number");
+      const { error } = await supabase.from("profiles").update({ opening_balance: v } as any).eq("id", uid);
+      if (error) throw error;
+    },
+    onSuccess: () => { setOpeningDraft(""); qc.invalidateQueries({ queryKey: ["profile", uid] }); toast.success("Opening balance saved"); },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const add = useMutation({
@@ -95,7 +116,7 @@ function Finances() {
         if (e.kind === "income") mIncome += v; else mExpense += v;
       }
     }
-    return { income, expense, balance: income - expense, mIncome, mExpense, mBalance: mIncome - mExpense };
+    return { income, expense, balance: opening + income - expense, mIncome, mExpense, mBalance: mIncome - mExpense };
   }, [entries]);
 
   const chartData = useMemo(() => {
@@ -129,6 +150,18 @@ function Finances() {
       </div>
 
       <Card>
+        <CardHeader><CardTitle className="text-base">Opening balance</CardTitle></CardHeader>
+        <CardContent className="flex flex-wrap items-end gap-3">
+          <div className="flex-1 min-w-[160px]">
+            <Label className="text-xs">Current balance to start tracking from</Label>
+            <Input type="number" step="0.01" placeholder={opening.toFixed(2)} value={openingDraft} onChange={(e) => setOpeningDraft(e.target.value)} />
+          </div>
+          <Button variant="outline" onClick={() => saveOpening.mutate()} disabled={saveOpening.isPending || openingDraft === ""}>Save</Button>
+          <div className="text-xs text-muted-foreground w-full sm:w-auto">Currently: <span className="font-mono">${opening.toFixed(2)}</span></div>
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader><CardTitle className="text-base">This month</CardTitle></CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-3 text-sm">
           <div><div className="text-muted-foreground">Income</div><div className="font-display text-2xl text-emerald-500">${totals.mIncome.toFixed(2)}</div></div>
@@ -139,8 +172,12 @@ function Finances() {
 
       <Card>
         <CardHeader><CardTitle className="text-base">Add entry</CardTitle></CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-6">
-          <div className="sm:col-span-1">
+        <CardContent className="grid gap-3 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Date</Label>
+            <DatePicker value={date} onChange={setDate} />
+          </div>
+          <div className="sm:col-span-2">
             <Label className="text-xs">Type</Label>
             <Select value={kind} onValueChange={(v) => setKind(v as any)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
@@ -150,25 +187,21 @@ function Finances() {
               </SelectContent>
             </Select>
           </div>
-          <div className="sm:col-span-1">
-            <Label className="text-xs">Amount</Label>
-            <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
-          </div>
-          <div className="sm:col-span-1">
+          <div>
             <Label className="text-xs">Category</Label>
             <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="food" />
+          </div>
+          <div>
+            <Label className="text-xs">Amount</Label>
+            <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
           </div>
           <div className="sm:col-span-2">
             <Label className="text-xs">Note</Label>
             <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional" />
           </div>
-          <div className="sm:col-span-1">
-            <Label className="text-xs">Date</Label>
-            <DatePicker value={date} onChange={setDate} />
-          </div>
-          <div className="sm:col-span-6">
-            <Button onClick={() => add.mutate()} disabled={add.isPending} className="w-full sm:w-auto">
-              <Plus className="size-4 mr-1" /> Add
+          <div className="sm:col-span-2">
+            <Button onClick={() => add.mutate()} disabled={add.isPending} className="w-full">
+              <Plus className="size-4 mr-1" /> Add entry
             </Button>
           </div>
         </CardContent>
