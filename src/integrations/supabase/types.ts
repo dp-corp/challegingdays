@@ -232,6 +232,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          opening_balance: number
           updated_at: string
         }
         Insert: {
@@ -240,6 +241,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          opening_balance?: number
           updated_at?: string
         }
         Update: {
@@ -248,9 +250,77 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          opening_balance?: number
           updated_at?: string
         }
         Relationships: []
+      }
+      project_invites: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          project_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          project_id: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          project_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_invites_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_members: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_members_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
@@ -484,7 +554,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_project_member: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_project_owner: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
