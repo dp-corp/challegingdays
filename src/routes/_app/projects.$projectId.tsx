@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Trash2, Repeat, Flame, Link as LinkIcon } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Repeat, Flame, Link as LinkIcon, Share2, Users } from "lucide-react";
 import { DatePicker } from "@/components/DatePicker";
 import { toast } from "sonner";
 import { todayISO } from "@/lib/challenge";
@@ -176,9 +176,10 @@ function ProjectDetail() {
         <Link to="/projects" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4 mr-1" />All projects</Link>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="font-display text-3xl md:text-5xl bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">{projectQ.data?.name}</h1>
               {isRecurring && <span className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full"><Repeat className="size-3" />Daily</span>}
+              <InviteButton projectId={projectId} ownerId={projectQ.data?.user_id} currentUid={uid} />
             </div>
             {projectQ.data?.description && <p className="mt-2 text-muted-foreground max-w-2xl">{projectQ.data.description}</p>}
           </div>
@@ -286,5 +287,33 @@ function ProjectDetail() {
         </>
       )}
     </div>
+  );
+}
+
+function InviteButton({ projectId, ownerId, currentUid }: { projectId: string; ownerId?: string; currentUid: string }) {
+  const membersQ = useQuery({
+    queryKey: ["project_members", projectId],
+    queryFn: async () => (await supabase.from("project_members" as any).select("user_id,role")).data ?? [],
+  });
+  const isOwner = ownerId === currentUid;
+  const memberCount = (membersQ.data?.length ?? 0) + 1;
+
+  const createInvite = async () => {
+    const token = (crypto as any).randomUUID().replace(/-/g, "");
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { error } = await supabase.from("project_invites" as any).insert({ project_id: projectId, token, created_by: currentUid, expires_at: expires });
+    if (error) return toast.error(error.message);
+    const url = `${window.location.origin}/join/${token}`;
+    try { await navigator.clipboard.writeText(url); toast.success("Invite link copied — valid 7 days"); }
+    catch { toast.success("Invite created", { description: url }); }
+  };
+
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><Users className="size-3.5" />{memberCount}</span>
+      {isOwner && (
+        <Button size="sm" variant="outline" onClick={createInvite}><Share2 className="size-3.5 mr-1" />Invite</Button>
+      )}
+    </span>
   );
 }
