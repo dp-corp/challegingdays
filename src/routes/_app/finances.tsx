@@ -116,7 +116,7 @@ function Finances() {
         if (e.kind === "income") mIncome += v; else mExpense += v;
       }
     }
-    return { income, expense, balance: income - expense, mIncome, mExpense, mBalance: mIncome - mExpense };
+    return { income, expense, balance: opening + income - expense, mIncome, mExpense, mBalance: mIncome - mExpense };
   }, [entries]);
 
   const chartData = useMemo(() => {
