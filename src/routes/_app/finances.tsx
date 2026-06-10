@@ -139,8 +139,12 @@ function Finances() {
 
       <Card>
         <CardHeader><CardTitle className="text-base">Add entry</CardTitle></CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-6">
-          <div className="sm:col-span-1">
+        <CardContent className="grid gap-3 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <Label className="text-xs">Date</Label>
+            <DatePicker value={date} onChange={setDate} />
+          </div>
+          <div className="sm:col-span-2">
             <Label className="text-xs">Type</Label>
             <Select value={kind} onValueChange={(v) => setKind(v as any)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
@@ -150,25 +154,21 @@ function Finances() {
               </SelectContent>
             </Select>
           </div>
-          <div className="sm:col-span-1">
-            <Label className="text-xs">Amount</Label>
-            <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
-          </div>
-          <div className="sm:col-span-1">
+          <div>
             <Label className="text-xs">Category</Label>
             <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="food" />
+          </div>
+          <div>
+            <Label className="text-xs">Amount</Label>
+            <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
           </div>
           <div className="sm:col-span-2">
             <Label className="text-xs">Note</Label>
             <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional" />
           </div>
-          <div className="sm:col-span-1">
-            <Label className="text-xs">Date</Label>
-            <DatePicker value={date} onChange={setDate} />
-          </div>
-          <div className="sm:col-span-6">
-            <Button onClick={() => add.mutate()} disabled={add.isPending} className="w-full sm:w-auto">
-              <Plus className="size-4 mr-1" /> Add
+          <div className="sm:col-span-2">
+            <Button onClick={() => add.mutate()} disabled={add.isPending} className="w-full">
+              <Plus className="size-4 mr-1" /> Add entry
             </Button>
           </div>
         </CardContent>
