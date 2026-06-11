@@ -267,22 +267,40 @@ function ProjectDetail() {
         </CardContent>
       </Card>
 
+      {members.length > 1 && isOwner && (
+        <Card className="border-accent/30 bg-gradient-to-br from-accent/5 to-card">
+          <CardContent className="p-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-sm font-medium flex items-center gap-2"><UsersRound className="size-4 text-accent" />Shared completion</div>
+              <p className="text-xs text-muted-foreground">{sharedMode ? "On — any member ticking an item counts for the whole team." : "Off — each member tracks their own check-ins."}</p>
+            </div>
+            <Switch checked={sharedMode} onCheckedChange={toggleSharedMode} />
+          </CardContent>
+        </Card>
+      )}
+
       {isRecurring ? (
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2"><Flame className="size-5 text-accent" />Today's items</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2"><Flame className="size-5 text-accent" />Today's items{sharedMode && <span className="text-xs font-normal text-accent">(team)</span>}</CardTitle></CardHeader>
           <CardContent className="space-y-2">
             {habits.length === 0 && <p className="text-sm text-muted-foreground">No daily items yet. Add one above - it'll show on your Daily Tracker too.</p>}
             {habits.map((h) => {
               const isDone = completedToday.has(h.id);
+              const doneBy = todayDoneBy[h.id];
               return (
                 <div key={h.id} className="flex items-center gap-3 rounded-lg border bg-card/60 px-3 py-2.5 hover:border-primary/40 transition">
                   <Checkbox checked={isDone} onCheckedChange={(v) => toggleHabitToday(h.id, !!v)} />
                   <div className="flex-1 min-w-0">
                     <div className={`text-sm ${isDone ? "line-through text-muted-foreground" : ""}`}>{h.name}</div>
-                    <div className="text-[10px] text-muted-foreground flex items-center gap-1"><LinkIcon className="size-2.5" />Synced with Daily Tracker</div>
+                    <div className="text-[10px] text-muted-foreground flex items-center gap-1 flex-wrap">
+                      <LinkIcon className="size-2.5" />Synced with Daily Tracker
+                      {members.length > 1 && doneBy && doneBy.size > 0 && (
+                        <span className="ml-1 text-accent">• {Array.from(doneBy).map((id) => members.find((m) => m.id === id)?.display_name?.split(" ")[0] || "member").join(", ")} done</span>
+                      )}
+                    </div>
                   </div>
                   <span className="text-xs text-muted-foreground tabular-nums">{per30[h.id] ?? 0}/30d</span>
-                  <Button size="icon" variant="ghost" onClick={() => removeHabit(h.id)}><Trash2 className="size-3.5" /></Button>
+                  {isOwner && <Button size="icon" variant="ghost" onClick={() => removeHabit(h.id)}><Trash2 className="size-3.5" /></Button>}
                 </div>
               );
             })}
