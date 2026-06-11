@@ -8,9 +8,9 @@ import { challengeDay, challengeProgress, gradeFor, todayISO, weekStartISO, CHAL
 import { maybeAwardBadges } from "@/lib/badges";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Flame, Target, TrendingUp, Trophy, Calendar } from "lucide-react";
+import { Flame, Target, TrendingUp, Trophy, Calendar, DollarSign, TrendingDown, Wallet } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
-import { format, subDays } from "date-fns";
+import { format, startOfMonth, subDays } from "date-fns";
 
 export const Route = createFileRoute("/_app/dashboard")({
   component: Dashboard,
@@ -67,6 +67,14 @@ function Dashboard() {
     queryFn: async () => {
       const { data } = await supabase.from("achievements").select("*").eq("user_id", uid).order("earned_at", { ascending: false }).limit(5);
       return data ?? [];
+    },
+  });
+
+  const financeQ = useQuery({
+    queryKey: ["finance-dash", uid],
+    queryFn: async () => {
+      const { data } = await supabase.from("finance_entries" as any).select("kind,amount,entry_date").eq("user_id", uid);
+      return (data ?? []) as { kind: "income" | "expense"; amount: number; entry_date: string }[];
     },
   });
 
