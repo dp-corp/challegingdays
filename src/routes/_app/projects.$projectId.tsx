@@ -342,6 +342,35 @@ function ProjectDetail() {
           </div>
         </>
       )}
+
+      {members.length > 1 && isRecurring && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <UsersRound className="size-4 text-accent" />Weekly report
+              <span className="text-xs font-normal text-muted-foreground">last 7 days</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {weekly.map((w) => {
+              const max = Math.max(1, ...weekly.map((x) => x.count));
+              const pct = Math.round((w.count / max) * 100);
+              return (
+                <div key={w.id} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="truncate">{w.name}{w.isOwner && <span className="ml-1 text-[10px] uppercase tracking-wider text-accent">owner</span>}{w.id === uid && <span className="ml-1 text-[10px] text-muted-foreground">you</span>}</span>
+                    <span className="text-muted-foreground tabular-nums">{w.count} check-ins</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-primary to-accent" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+            {weekly.every((w) => w.count === 0) && <p className="text-sm text-muted-foreground">No check-ins yet this week.</p>}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
