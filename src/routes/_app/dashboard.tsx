@@ -115,6 +115,20 @@ function Dashboard() {
     { name: "Habits", value: today?.habits_score ?? 0, fill: "var(--chart-5)" },
   ];
 
+  const opening = Number((profileQ.data as any)?.opening_balance ?? 0);
+  const fin = (financeQ.data ?? []);
+  const monthStart = startOfMonth(new Date());
+  let allIn = 0, allOut = 0, mIn = 0, mOut = 0;
+  for (const e of fin) {
+    const v = Number(e.amount);
+    if (e.kind === "income") allIn += v; else allOut += v;
+    if (new Date(e.entry_date) >= monthStart) {
+      if (e.kind === "income") mIn += v; else mOut += v;
+    }
+  }
+  const finBalance = opening + allIn - allOut;
+  const mNet = mIn - mOut;
+
   const grade = gradeFor(today?.daily_score ?? 0);
 
   return (
