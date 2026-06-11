@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -149,15 +150,23 @@ function Finances() {
         <StatCard label="Expense (all-time)" value={totals.expense} icon={<TrendingDown className="size-4" />} tone="down" />
       </div>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Opening balance</CardTitle></CardHeader>
-        <CardContent className="flex flex-wrap items-end gap-3">
-          <div className="flex-1 min-w-[160px]">
-            <Label className="text-xs">Current balance to start tracking from</Label>
-            <Input type="number" step="0.01" placeholder={opening.toFixed(2)} value={openingDraft} onChange={(e) => setOpeningDraft(e.target.value)} />
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-card to-accent/5 overflow-hidden">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base flex items-center gap-2"><Wallet className="size-4 text-primary" />Starting balance</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-xs text-muted-foreground">Set the balance you're starting from. Income and expenses below add and subtract from this.</p>
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="flex-1 min-w-[180px]">
+              <Label className="text-xs text-muted-foreground">Current balance</Label>
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                <Input type="number" step="0.01" placeholder={opening.toFixed(2)} value={openingDraft} onChange={(e) => setOpeningDraft(e.target.value)} className="pl-7 h-11" />
+              </div>
+            </div>
+            <Button onClick={() => saveOpening.mutate()} disabled={saveOpening.isPending || openingDraft === ""} className="h-11">Save balance</Button>
           </div>
-          <Button variant="outline" onClick={() => saveOpening.mutate()} disabled={saveOpening.isPending || openingDraft === ""}>Save</Button>
-          <div className="text-xs text-muted-foreground w-full sm:w-auto">Currently: <span className="font-mono">${opening.toFixed(2)}</span></div>
+          <div className="text-xs text-muted-foreground">Saved: <span className="font-mono font-medium text-foreground">${opening.toFixed(2)}</span></div>
         </CardContent>
       </Card>
 
@@ -170,40 +179,46 @@ function Finances() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Add entry</CardTitle></CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <Label className="text-xs">Date</Label>
-            <DatePicker value={date} onChange={setDate} />
-          </div>
-          <div className="sm:col-span-2">
-            <Label className="text-xs">Type</Label>
-            <Select value={kind} onValueChange={(v) => setKind(v as any)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="expense">Expense</SelectItem>
-                <SelectItem value="income">Income</SelectItem>
-              </SelectContent>
-            </Select>
+      <Card className="border-accent/20 bg-gradient-to-br from-card to-accent/5">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base flex items-center gap-2"><Plus className="size-4 text-accent" />Add entry</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label className="text-xs text-muted-foreground">Date</Label>
+            <div className="mt-1"><DatePicker value={date} onChange={setDate} /></div>
           </div>
           <div>
-            <Label className="text-xs">Category</Label>
-            <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="food" />
+            <Label className="text-xs text-muted-foreground">Type</Label>
+            <div className="mt-1 grid grid-cols-2 gap-2">
+              <button type="button" onClick={() => setKind("expense")} className={`h-11 rounded-md border text-sm font-medium transition flex items-center justify-center gap-2 ${kind === "expense" ? "bg-rose-500/10 border-rose-500/50 text-rose-500" : "hover:bg-muted/40"}`}>
+                <TrendingDown className="size-4" />Expense
+              </button>
+              <button type="button" onClick={() => setKind("income")} className={`h-11 rounded-md border text-sm font-medium transition flex items-center justify-center gap-2 ${kind === "income" ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-500" : "hover:bg-muted/40"}`}>
+                <TrendingUp className="size-4" />Income
+              </button>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <Label className="text-xs text-muted-foreground">Category</Label>
+              <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="food, rent, salary…" className="mt-1 h-11" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Amount</Label>
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" className="pl-7 h-11" />
+              </div>
+            </div>
           </div>
           <div>
-            <Label className="text-xs">Amount</Label>
-            <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
+            <Label className="text-xs text-muted-foreground">Note</Label>
+            <Textarea rows={3} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional details — supports multiple lines" className="mt-1 resize-none" />
           </div>
-          <div className="sm:col-span-2">
-            <Label className="text-xs">Note</Label>
-            <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional" />
-          </div>
-          <div className="sm:col-span-2">
-            <Button onClick={() => add.mutate()} disabled={add.isPending} className="w-full">
-              <Plus className="size-4 mr-1" /> Add entry
-            </Button>
-          </div>
+          <Button onClick={() => add.mutate()} disabled={add.isPending} className="w-full h-11">
+            <Plus className="size-4 mr-1" /> Add entry
+          </Button>
         </CardContent>
       </Card>
 

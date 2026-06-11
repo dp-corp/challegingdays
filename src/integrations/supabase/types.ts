@@ -333,6 +333,7 @@ export type Database = {
           notes: string | null
           priority: string
           progress: number
+          shared_completion: boolean
           status: string
           target_days: number
           updated_at: string
@@ -348,6 +349,7 @@ export type Database = {
           notes?: string | null
           priority?: string
           progress?: number
+          shared_completion?: boolean
           status?: string
           target_days?: number
           updated_at?: string
@@ -363,6 +365,7 @@ export type Database = {
           notes?: string | null
           priority?: string
           progress?: number
+          shared_completion?: boolean
           status?: string
           target_days?: number
           updated_at?: string

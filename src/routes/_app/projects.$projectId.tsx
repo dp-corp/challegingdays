@@ -12,7 +12,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Trash2, Repeat, Flame, Link as LinkIcon, Share2, Users } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Repeat, Flame, Link as LinkIcon, Share2, Users, UsersRound } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { DatePicker } from "@/components/DatePicker";
 import { toast } from "sonner";
 import { todayISO } from "@/lib/challenge";
@@ -56,12 +57,25 @@ function ProjectDetail() {
   const habitLogsQ = useQuery({
     queryKey: ["project_habit_logs", projectId, habitIds.join(",")],
     queryFn: async () => {
-      if (habitIds.length === 0) return [];
+      if (habitIds.length === 0) return [] as { habit_id: string; log_date: string; user_id: string }[];
       const from = format(subDays(new Date(), 89), "yyyy-MM-dd");
-      const { data } = await supabase.from("habit_logs").select("habit_id, log_date").in("habit_id", habitIds).gte("log_date", from);
-      return data ?? [];
+      const { data } = await supabase.from("habit_logs").select("habit_id, log_date, user_id").in("habit_id", habitIds).gte("log_date", from);
+      return (data ?? []) as { habit_id: string; log_date: string; user_id: string }[];
     },
     enabled: habitIds.length > 0,
+  });
+
+  const membersQ = useQuery({
+    queryKey: ["project_members_full", projectId, projectQ.data?.user_id],
+    queryFn: async () => {
+      const { data: members } = await supabase.from("project_members" as any).select("user_id").eq("project_id", projectId);
+      const ids = [projectQ.data?.user_id, ...((members ?? []) as any).map((m: any) => m.user_id)].filter(Boolean);
+      const unique = Array.from(new Set(ids));
+      if (unique.length === 0) return [] as { id: string; display_name: string | null }[];
+      const { data: profiles } = await supabase.from("profiles").select("id, display_name").in("id", unique);
+      return (profiles ?? []).map((p: any) => ({ id: p.id, display_name: p.display_name }));
+    },
+    enabled: !!projectQ.data,
   });
 
   const isRecurring = !!projectQ.data?.is_recurring;
@@ -151,7 +165,20 @@ function ProjectDetail() {
   const tasks = tasksQ.data ?? [];
   const habits = habitsQ.data ?? [];
   const logs = habitLogsQ.data ?? [];
-  const completedToday = useMemo(() => new Set(logs.filter((l) => l.log_date === today).map((l) => l.habit_id)), [logs, today]);
+  const members = membersQ.data ?? [];
+  const sharedMode = !!projectQ.data?.shared_completion;
+  const isOwner = projectQ.data?.user_id === uid;
+
+  const todayLogs = useMemo(() => logs.filter((l) => l.log_date === today), [logs, today]);
+  const completedToday = useMemo(() => {
+    if (sharedMode) return new Set(todayLogs.map((l) => l.habit_id));
+    return new Set(todayLogs.filter((l) => l.user_id === uid).map((l) => l.habit_id));
+  }, [todayLogs, sharedMode, uid]);
+  const todayDoneBy = useMemo(() => {
+    const m: Record<string, Set<string>> = {};
+    for (const l of todayLogs) (m[l.habit_id] ||= new Set()).add(l.user_id);
+    return m;
+  }, [todayLogs]);
   const per30 = useMemo(() => {
     const m: Record<string, number> = {};
     const from = subDays(new Date(), 29);
@@ -159,12 +186,27 @@ function ProjectDetail() {
     return m;
   }, [logs]);
 
+  // weekly report: per-member completions in last 7 days
+  const weekly = useMemo(() => {
+    const since = subDays(new Date(), 6);
+    const counts: Record<string, number> = {};
+    for (const l of logs) if (new Date(l.log_date) >= since) counts[l.user_id] = (counts[l.user_id] ?? 0) + 1;
+    return members.map((m) => ({ id: m.id, name: m.display_name || (m.id === projectQ.data?.user_id ? "Owner" : "Member"), count: counts[m.id] ?? 0, isOwner: m.id === projectQ.data?.user_id }))
+      .sort((a, b) => b.count - a.count);
+  }, [logs, members, projectQ.data?.user_id]);
+
   const daysDone = useMemo(() => new Set(logs.map((l) => l.log_date)).size, [logs]);
   const daysLeft = Math.max(0, targetDays - daysDone);
   const completedTasks = tasks.filter((t) => t.status === "completed").length;
   const progress = isRecurring
     ? Math.min(100, Math.round((daysDone / targetDays) * 100))
     : tasks.length ? Math.round((completedTasks / tasks.length) * 100) : 0;
+
+  const toggleSharedMode = async (v: boolean) => {
+    await supabase.from("projects").update({ shared_completion: v } as any).eq("id", projectId);
+    qc.invalidateQueries({ queryKey: ["project", projectId] });
+    toast.success(v ? "Shared mode: anyone ticking counts for the team" : "Personal mode: each member tracks their own");
+  };
 
   if (projectQ.isLoading) {
     return <div className="space-y-4"><Skeleton className="h-10 w-48" /><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>;
@@ -225,22 +267,40 @@ function ProjectDetail() {
         </CardContent>
       </Card>
 
+      {members.length > 1 && isOwner && (
+        <Card className="border-accent/30 bg-gradient-to-br from-accent/5 to-card">
+          <CardContent className="p-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-sm font-medium flex items-center gap-2"><UsersRound className="size-4 text-accent" />Shared completion</div>
+              <p className="text-xs text-muted-foreground">{sharedMode ? "On — any member ticking an item counts for the whole team." : "Off — each member tracks their own check-ins."}</p>
+            </div>
+            <Switch checked={sharedMode} onCheckedChange={toggleSharedMode} />
+          </CardContent>
+        </Card>
+      )}
+
       {isRecurring ? (
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2"><Flame className="size-5 text-accent" />Today's items</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="flex items-center gap-2"><Flame className="size-5 text-accent" />Today's items{sharedMode && <span className="text-xs font-normal text-accent">(team)</span>}</CardTitle></CardHeader>
           <CardContent className="space-y-2">
             {habits.length === 0 && <p className="text-sm text-muted-foreground">No daily items yet. Add one above - it'll show on your Daily Tracker too.</p>}
             {habits.map((h) => {
               const isDone = completedToday.has(h.id);
+              const doneBy = todayDoneBy[h.id];
               return (
                 <div key={h.id} className="flex items-center gap-3 rounded-lg border bg-card/60 px-3 py-2.5 hover:border-primary/40 transition">
                   <Checkbox checked={isDone} onCheckedChange={(v) => toggleHabitToday(h.id, !!v)} />
                   <div className="flex-1 min-w-0">
                     <div className={`text-sm ${isDone ? "line-through text-muted-foreground" : ""}`}>{h.name}</div>
-                    <div className="text-[10px] text-muted-foreground flex items-center gap-1"><LinkIcon className="size-2.5" />Synced with Daily Tracker</div>
+                    <div className="text-[10px] text-muted-foreground flex items-center gap-1 flex-wrap">
+                      <LinkIcon className="size-2.5" />Synced with Daily Tracker
+                      {members.length > 1 && doneBy && doneBy.size > 0 && (
+                        <span className="ml-1 text-accent">• {Array.from(doneBy).map((id) => members.find((m) => m.id === id)?.display_name?.split(" ")[0] || "member").join(", ")} done</span>
+                      )}
+                    </div>
                   </div>
                   <span className="text-xs text-muted-foreground tabular-nums">{per30[h.id] ?? 0}/30d</span>
-                  <Button size="icon" variant="ghost" onClick={() => removeHabit(h.id)}><Trash2 className="size-3.5" /></Button>
+                  {isOwner && <Button size="icon" variant="ghost" onClick={() => removeHabit(h.id)}><Trash2 className="size-3.5" /></Button>}
                 </div>
               );
             })}
@@ -271,13 +331,9 @@ function ProjectDetail() {
                 <div className="text-xs uppercase tracking-wider text-muted-foreground px-1">{c.label}</div>
                 <div className="space-y-2 rounded-xl border bg-card/30 p-2 min-h-32">
                   {tasks.filter((t) => t.status === c.id).map((t) => (
-                    <Card key={t.id}><CardContent className="p-3 space-y-2">
+                    <Card key={t.id}><CardContent className="p-3">
                       <div className="text-sm">{t.title}</div>
-                      <div className="flex items-center gap-1 flex-wrap">
-                        {COLS.filter((x) => x.id !== c.id).map((x) => (
-                          <button key={x.id} onClick={() => move(t.id, x.id)} className="text-[10px] rounded-full border px-2 py-0.5 hover:bg-accent/20">{x.label}</button>
-                        ))}
-                      </div>
+                      {t.due_date && <div className="text-[10px] text-muted-foreground mt-1">Due {t.due_date}</div>}
                     </CardContent></Card>
                   ))}
                 </div>
@@ -285,6 +341,35 @@ function ProjectDetail() {
             ))}
           </div>
         </>
+      )}
+
+      {members.length > 1 && isRecurring && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <UsersRound className="size-4 text-accent" />Weekly report
+              <span className="text-xs font-normal text-muted-foreground">last 7 days</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {weekly.map((w) => {
+              const max = Math.max(1, ...weekly.map((x) => x.count));
+              const pct = Math.round((w.count / max) * 100);
+              return (
+                <div key={w.id} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="truncate">{w.name}{w.isOwner && <span className="ml-1 text-[10px] uppercase tracking-wider text-accent">owner</span>}{w.id === uid && <span className="ml-1 text-[10px] text-muted-foreground">you</span>}</span>
+                    <span className="text-muted-foreground tabular-nums">{w.count} check-ins</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-primary to-accent" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+            {weekly.every((w) => w.count === 0) && <p className="text-sm text-muted-foreground">No check-ins yet this week.</p>}
+          </CardContent>
+        </Card>
       )}
     </div>
   );
