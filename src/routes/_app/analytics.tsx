@@ -125,11 +125,12 @@ function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Stat icon={<TrendingUp className="size-4" />} label="Avg score" value={`${avg}`} />
+        <Stat icon={<TrendingUp className="size-4" />} label="Habit completions" value={`${totalLogs}`} sub="last 90 days" />
         <Stat icon={<Flame className="size-4 text-accent" />} label="Best streak" value={`${longest}d`} />
         <Stat icon={<Calendar className="size-4" />} label="Best day" value={best ? `${best.daily_score}` : "-"} sub={best ? format(new Date(best.score_date), "MMM d") : undefined} />
         <Stat icon={<Target className="size-4 text-primary" />} label="Tasks done" value={`${completedTasks}/${totalTasks}`} />
       </div>
+      <div className="text-[10px] text-muted-foreground -mt-3">Avg score (90d): {avg}</div>
 
       <Card>
         <CardHeader><CardTitle>Daily score trend</CardTitle><CardDescription>Last 90 days</CardDescription></CardHeader>

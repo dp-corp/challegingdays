@@ -271,13 +271,9 @@ function ProjectDetail() {
                 <div className="text-xs uppercase tracking-wider text-muted-foreground px-1">{c.label}</div>
                 <div className="space-y-2 rounded-xl border bg-card/30 p-2 min-h-32">
                   {tasks.filter((t) => t.status === c.id).map((t) => (
-                    <Card key={t.id}><CardContent className="p-3 space-y-2">
+                    <Card key={t.id}><CardContent className="p-3">
                       <div className="text-sm">{t.title}</div>
-                      <div className="flex items-center gap-1 flex-wrap">
-                        {COLS.filter((x) => x.id !== c.id).map((x) => (
-                          <button key={x.id} onClick={() => move(t.id, x.id)} className="text-[10px] rounded-full border px-2 py-0.5 hover:bg-accent/20">{x.label}</button>
-                        ))}
-                      </div>
+                      {t.due_date && <div className="text-[10px] text-muted-foreground mt-1">Due {t.due_date}</div>}
                     </CardContent></Card>
                   ))}
                 </div>
