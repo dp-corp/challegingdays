@@ -165,7 +165,20 @@ function ProjectDetail() {
   const tasks = tasksQ.data ?? [];
   const habits = habitsQ.data ?? [];
   const logs = habitLogsQ.data ?? [];
-  const completedToday = useMemo(() => new Set(logs.filter((l) => l.log_date === today).map((l) => l.habit_id)), [logs, today]);
+  const members = membersQ.data ?? [];
+  const sharedMode = !!projectQ.data?.shared_completion;
+  const isOwner = projectQ.data?.user_id === uid;
+
+  const todayLogs = useMemo(() => logs.filter((l) => l.log_date === today), [logs, today]);
+  const completedToday = useMemo(() => {
+    if (sharedMode) return new Set(todayLogs.map((l) => l.habit_id));
+    return new Set(todayLogs.filter((l) => l.user_id === uid).map((l) => l.habit_id));
+  }, [todayLogs, sharedMode, uid]);
+  const todayDoneBy = useMemo(() => {
+    const m: Record<string, Set<string>> = {};
+    for (const l of todayLogs) (m[l.habit_id] ||= new Set()).add(l.user_id);
+    return m;
+  }, [todayLogs]);
   const per30 = useMemo(() => {
     const m: Record<string, number> = {};
     const from = subDays(new Date(), 29);
@@ -173,12 +186,27 @@ function ProjectDetail() {
     return m;
   }, [logs]);
 
+  // weekly report: per-member completions in last 7 days
+  const weekly = useMemo(() => {
+    const since = subDays(new Date(), 6);
+    const counts: Record<string, number> = {};
+    for (const l of logs) if (new Date(l.log_date) >= since) counts[l.user_id] = (counts[l.user_id] ?? 0) + 1;
+    return members.map((m) => ({ id: m.id, name: m.display_name || (m.id === projectQ.data?.user_id ? "Owner" : "Member"), count: counts[m.id] ?? 0, isOwner: m.id === projectQ.data?.user_id }))
+      .sort((a, b) => b.count - a.count);
+  }, [logs, members, projectQ.data?.user_id]);
+
   const daysDone = useMemo(() => new Set(logs.map((l) => l.log_date)).size, [logs]);
   const daysLeft = Math.max(0, targetDays - daysDone);
   const completedTasks = tasks.filter((t) => t.status === "completed").length;
   const progress = isRecurring
     ? Math.min(100, Math.round((daysDone / targetDays) * 100))
     : tasks.length ? Math.round((completedTasks / tasks.length) * 100) : 0;
+
+  const toggleSharedMode = async (v: boolean) => {
+    await supabase.from("projects").update({ shared_completion: v } as any).eq("id", projectId);
+    qc.invalidateQueries({ queryKey: ["project", projectId] });
+    toast.success(v ? "Shared mode: anyone ticking counts for the team" : "Personal mode: each member tracks their own");
+  };
 
   if (projectQ.isLoading) {
     return <div className="space-y-4"><Skeleton className="h-10 w-48" /><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>;
