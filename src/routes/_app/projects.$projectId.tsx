@@ -12,7 +12,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Trash2, Repeat, Flame, Link as LinkIcon, Share2, Users } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Repeat, Flame, Link as LinkIcon, Share2, Users, UsersRound } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { DatePicker } from "@/components/DatePicker";
 import { toast } from "sonner";
 import { todayISO } from "@/lib/challenge";
@@ -56,12 +57,25 @@ function ProjectDetail() {
   const habitLogsQ = useQuery({
     queryKey: ["project_habit_logs", projectId, habitIds.join(",")],
     queryFn: async () => {
-      if (habitIds.length === 0) return [];
+      if (habitIds.length === 0) return [] as { habit_id: string; log_date: string; user_id: string }[];
       const from = format(subDays(new Date(), 89), "yyyy-MM-dd");
-      const { data } = await supabase.from("habit_logs").select("habit_id, log_date").in("habit_id", habitIds).gte("log_date", from);
-      return data ?? [];
+      const { data } = await supabase.from("habit_logs").select("habit_id, log_date, user_id").in("habit_id", habitIds).gte("log_date", from);
+      return (data ?? []) as { habit_id: string; log_date: string; user_id: string }[];
     },
     enabled: habitIds.length > 0,
+  });
+
+  const membersQ = useQuery({
+    queryKey: ["project_members_full", projectId, projectQ.data?.user_id],
+    queryFn: async () => {
+      const { data: members } = await supabase.from("project_members" as any).select("user_id").eq("project_id", projectId);
+      const ids = [projectQ.data?.user_id, ...((members ?? []) as any).map((m: any) => m.user_id)].filter(Boolean);
+      const unique = Array.from(new Set(ids));
+      if (unique.length === 0) return [] as { id: string; display_name: string | null }[];
+      const { data: profiles } = await supabase.from("profiles").select("id, display_name").in("id", unique);
+      return (profiles ?? []).map((p: any) => ({ id: p.id, display_name: p.display_name }));
+    },
+    enabled: !!projectQ.data,
   });
 
   const isRecurring = !!projectQ.data?.is_recurring;
