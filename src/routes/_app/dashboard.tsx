@@ -74,7 +74,7 @@ function Dashboard() {
     queryKey: ["finance-dash", uid],
     queryFn: async () => {
       const { data } = await supabase.from("finance_entries" as any).select("kind,amount,entry_date").eq("user_id", uid);
-      return (data ?? []) as { kind: "income" | "expense"; amount: number; entry_date: string }[];
+      return ((data ?? []) as unknown) as { kind: "income" | "expense"; amount: number; entry_date: string }[];
     },
   });
 
