@@ -167,6 +167,31 @@ function Dashboard() {
         <Stat icon={<Target className="size-4 text-primary" />} label="Goals" value={`${(goalsQ.data ?? []).length}`} sub={`${Math.round(((goalsQ.data ?? []).reduce((a, g: any) => a + (g.progress || 0), 0)) / Math.max(1, (goalsQ.data ?? []).length))}% avg progress`} />
       </div>
 
+      <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-card to-accent/5">
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2"><DollarSign className="size-4 text-primary" />Financial snapshot</CardTitle>
+          <a href="/finances" className="text-xs text-primary hover:underline">Open →</a>
+        </CardHeader>
+        <CardContent className="grid gap-3 sm:grid-cols-4 text-sm">
+          <div>
+            <div className="text-xs text-muted-foreground flex items-center gap-1"><Wallet className="size-3" />Balance</div>
+            <div className="font-display text-2xl mt-1">${finBalance.toFixed(2)}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground flex items-center gap-1"><TrendingUp className="size-3" />Month in</div>
+            <div className="font-display text-2xl mt-1 text-emerald-500">${mIn.toFixed(2)}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground flex items-center gap-1"><TrendingDown className="size-3" />Month out</div>
+            <div className="font-display text-2xl mt-1 text-rose-500">${mOut.toFixed(2)}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">Net this month</div>
+            <div className={`font-display text-2xl mt-1 ${mNet >= 0 ? "text-emerald-500" : "text-rose-500"}`}>${mNet.toFixed(2)}</div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader><CardTitle>Daily score (30 days)</CardTitle></CardHeader>
