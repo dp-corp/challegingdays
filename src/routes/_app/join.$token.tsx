@@ -25,15 +25,31 @@ function JoinPage() {
         .select("project_id, expires_at")
         .eq("token", token)
         .maybeSingle();
-      if (error || !invite) { setStatus("Invite not found or expired."); return; }
+      if (error || !invite) {
+        setStatus("Invite not found or expired.");
+        return;
+      }
       const inv = invite as any;
-      if (inv.expires_at && new Date(inv.expires_at) < new Date()) { setStatus("This invite has expired."); return; }
+      if (inv.expires_at && new Date(inv.expires_at) < new Date()) {
+        setStatus("This invite has expired.");
+        return;
+      }
       const { error: mErr } = await supabase
         .from("project_members" as any)
-        .upsert({ project_id: inv.project_id, user_id: user.id, role: "member" }, { onConflict: "project_id,user_id" });
-      if (mErr) { setStatus(mErr.message); return; }
+        .upsert(
+          { project_id: inv.project_id, user_id: user.id, role: "member" },
+          { onConflict: "project_id,user_id" },
+        );
+      if (mErr) {
+        setStatus(mErr.message);
+        return;
+      }
       toast.success("You joined the project");
-      navigate({ to: "/projects/$projectId", params: { projectId: inv.project_id }, replace: true });
+      navigate({
+        to: "/projects/$projectId",
+        params: { projectId: inv.project_id },
+        replace: true,
+      });
     })();
   }, [user, token, navigate]);
 

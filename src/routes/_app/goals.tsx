@@ -11,7 +11,14 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Plus, Trash2, ChevronDown, ChevronUp, Target } from "lucide-react";
 import { toast } from "sonner";
@@ -42,7 +49,11 @@ function GoalsPage() {
   const goalsQ = useQuery({
     queryKey: ["goals", uid],
     queryFn: async () => {
-      const { data, error } = await supabase.from("goals").select("*").eq("user_id", uid).order("created_at");
+      const { data, error } = await supabase
+        .from("goals")
+        .select("*")
+        .eq("user_id", uid)
+        .order("created_at");
       if (error) throw error;
       return data ?? [];
     },
@@ -52,33 +63,53 @@ function GoalsPage() {
   useEffect(() => {
     const extra = localStorage.getItem("goal_categories");
     if (extra) {
-      try { const parsed = JSON.parse(extra); setCategories([...DEFAULT_CATEGORIES, ...parsed]); } catch {}
+      try {
+        const parsed = JSON.parse(extra);
+        setCategories([...DEFAULT_CATEGORIES, ...parsed]);
+      } catch {}
     }
   }, []);
   const addCategory = (o: SelectOption) => {
     setCategories((prev) => [...prev, o]);
-    const custom = [...categories.filter((c) => !DEFAULT_CATEGORIES.find((d) => d.value === c.value)), o];
+    const custom = [
+      ...categories.filter((c) => !DEFAULT_CATEGORIES.find((d) => d.value === c.value)),
+      o,
+    ];
     localStorage.setItem("goal_categories", JSON.stringify(custom));
   };
 
   const [open, setOpen] = useState(false);
-  const blank = { category: "number_one", title: "", description: "", target_date: "" as string | null, notes: "" };
+  const blank = {
+    category: "number_one",
+    title: "",
+    description: "",
+    target_date: "" as string | null,
+    notes: "",
+  };
   const [form, setForm] = useState(blank);
 
   const create = async () => {
     if (!form.title) return toast.error("Add a title");
     const { error } = await supabase.from("goals").insert({
-      user_id: uid, category: form.category, title: form.title, description: form.description,
-      target_date: form.target_date || null, notes: form.notes,
+      user_id: uid,
+      category: form.category,
+      title: form.title,
+      description: form.description,
+      target_date: form.target_date || null,
+      notes: form.notes,
     });
     if (error) return toast.error(error.message);
-    setOpen(false); setForm(blank);
+    setOpen(false);
+    setForm(blank);
     qc.invalidateQueries({ queryKey: ["goals", uid] });
     toast.success("Goal created");
   };
 
   const updateProgress = async (id: string, progress: number) => {
-    await supabase.from("goals").update({ progress, updated_at: new Date().toISOString() }).eq("id", id);
+    await supabase
+      .from("goals")
+      .update({ progress, updated_at: new Date().toISOString() })
+      .eq("id", id);
     qc.invalidateQueries({ queryKey: ["goals", uid] });
   };
   const remove = async (id: string) => {
@@ -87,7 +118,9 @@ function GoalsPage() {
   };
 
   const goals = goalsQ.data ?? [];
-  const avgProgress = goals.length ? Math.round(goals.reduce((a: number, g: any) => a + (g.progress ?? 0), 0) / goals.length) : 0;
+  const avgProgress = goals.length
+    ? Math.round(goals.reduce((a: number, g: any) => a + (g.progress ?? 0), 0) / goals.length)
+    : 0;
   const done = goals.filter((g) => (g.progress ?? 0) >= 100).length;
 
   return (
@@ -98,7 +131,12 @@ function GoalsPage() {
           <p className="mt-2 text-muted-foreground">Six aligned goals. One north star.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="mx-auto sm:mx-0"><Plus className="size-4 mr-1" />New goal</Button></DialogTrigger>
+          <DialogTrigger asChild>
+            <Button className="mx-auto sm:mx-0">
+              <Plus className="size-4 mr-1" />
+              New goal
+            </Button>
+          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>New goal</DialogTitle>
@@ -107,14 +145,48 @@ function GoalsPage() {
             <div className="space-y-3">
               <div>
                 <Label>Category</Label>
-                <SelectWithAdd value={form.category} onChange={(v) => setForm({ ...form, category: v })}
-                  options={categories} onAdd={addCategory} addLabel="Add custom category…" />
+                <SelectWithAdd
+                  value={form.category}
+                  onChange={(v) => setForm({ ...form, category: v })}
+                  options={categories}
+                  onAdd={addCategory}
+                  addLabel="Add custom category…"
+                />
               </div>
-              <div><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Run a half marathon" /></div>
-              <div><Label>Why it matters</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
-              <div><Label>Target date</Label><DatePicker value={form.target_date} onChange={(v) => setForm({ ...form, target_date: v })} /></div>
-              <div><Label>Notes</Label><Textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="How will you make it happen?" /></div>
-              <Button onClick={create} className="w-full">Create goal</Button>
+              <div>
+                <Label>Title</Label>
+                <Input
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  placeholder="Run a half marathon"
+                />
+              </div>
+              <div>
+                <Label>Why it matters</Label>
+                <Textarea
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Target date</Label>
+                <DatePicker
+                  value={form.target_date}
+                  onChange={(v) => setForm({ ...form, target_date: v })}
+                />
+              </div>
+              <div>
+                <Label>Notes</Label>
+                <Textarea
+                  rows={2}
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                  placeholder="How will you make it happen?"
+                />
+              </div>
+              <Button onClick={create} className="w-full">
+                Create goal
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -128,10 +200,19 @@ function GoalsPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         {goals.map((g) => (
-          <GoalCard key={g.id} goal={g} categories={categories} onProgress={(p: number) => updateProgress(g.id, p)} onRemove={() => remove(g.id)} onChanged={() => qc.invalidateQueries({ queryKey: ["goals", uid] })} />
+          <GoalCard
+            key={g.id}
+            goal={g}
+            categories={categories}
+            onProgress={(p: number) => updateProgress(g.id, p)}
+            onRemove={() => remove(g.id)}
+            onChanged={() => qc.invalidateQueries({ queryKey: ["goals", uid] })}
+          />
         ))}
         {goals.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center md:col-span-2">No goals yet. Create your Number One Goal first.</p>
+          <p className="text-sm text-muted-foreground text-center md:col-span-2">
+            No goals yet. Create your Number One Goal first.
+          </p>
         )}
       </div>
     </div>
@@ -151,15 +232,20 @@ function CounterCard({ label, value }: { label: string; value: number | string }
 
 function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
   const [openDetail, setOpenDetail] = useState(false);
-  const [milestones, setMilestones] = useState<Milestone[]>(Array.isArray(goal.milestones) ? goal.milestones : []);
+  const [milestones, setMilestones] = useState<Milestone[]>(
+    Array.isArray(goal.milestones) ? goal.milestones : [],
+  );
   const [notes, setNotes] = useState<string>(goal.notes ?? "");
   const [target, setTarget] = useState<string | null>(goal.target_date ?? null);
   const [newMilestone, setNewMilestone] = useState("");
   const [localProgress, setLocalProgress] = useState<number>(goal.progress ?? 0);
 
-  useEffect(() => { setMilestones(Array.isArray(goal.milestones) ? goal.milestones : []); }, [goal.milestones]);
-  useEffect(() => { setLocalProgress(goal.progress ?? 0); }, [goal.progress]);
-
+  useEffect(() => {
+    setMilestones(Array.isArray(goal.milestones) ? goal.milestones : []);
+  }, [goal.milestones]);
+  useEffect(() => {
+    setLocalProgress(goal.progress ?? 0);
+  }, [goal.progress]);
 
   const persistMilestones = async (next: Milestone[]) => {
     setMilestones(next);
@@ -177,11 +263,15 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
     persistMilestones([...milestones, m]);
     setNewMilestone("");
   };
-  const toggleM = (id: string) => persistMilestones(milestones.map((m) => m.id === id ? { ...m, done: !m.done } : m));
+  const toggleM = (id: string) =>
+    persistMilestones(milestones.map((m) => (m.id === id ? { ...m, done: !m.done } : m)));
   const removeM = (id: string) => persistMilestones(milestones.filter((m) => m.id !== id));
 
   const saveMeta = async () => {
-    await supabase.from("goals").update({ notes, target_date: target || null, updated_at: new Date().toISOString() }).eq("id", goal.id);
+    await supabase
+      .from("goals")
+      .update({ notes, target_date: target || null, updated_at: new Date().toISOString() })
+      .eq("id", goal.id);
     toast.success("Saved");
     onChanged();
   };
@@ -191,16 +281,24 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
       <CardContent className="p-5 space-y-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <div className="text-[10px] uppercase tracking-widest text-accent">{categories.find((c: any) => c.value === goal.category)?.label ?? goal.category}</div>
+            <div className="text-[10px] uppercase tracking-widest text-accent">
+              {categories.find((c: any) => c.value === goal.category)?.label ?? goal.category}
+            </div>
             <h3 className="font-display text-2xl mt-1 break-words">{goal.title}</h3>
-            {goal.description && <p className="text-sm text-muted-foreground mt-1">{goal.description}</p>}
+            {goal.description && (
+              <p className="text-sm text-muted-foreground mt-1">{goal.description}</p>
+            )}
           </div>
-          <Button size="icon" variant="ghost" onClick={onRemove}><Trash2 className="size-4" /></Button>
+          <Button size="icon" variant="ghost" onClick={onRemove}>
+            <Trash2 className="size-4" />
+          </Button>
         </div>
         <div className="space-y-2">
           <div className="flex items-baseline justify-between">
             <span className="text-xs uppercase tracking-wider text-muted-foreground">Progress</span>
-            <span className="font-display text-2xl tabular-nums bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{localProgress}%</span>
+            <span className="font-display text-2xl tabular-nums bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {localProgress}%
+            </span>
           </div>
           <div className="relative h-2.5 rounded-full bg-secondary overflow-hidden">
             <div
@@ -218,8 +316,12 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
         </div>
 
         <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">{target ? `🎯 ${target}` : "No target date"}</span>
-          <span className="text-muted-foreground">{milestones.filter((m) => m.done).length}/{milestones.length} milestones</span>
+          <span className="text-muted-foreground">
+            {target ? `🎯 ${target}` : "No target date"}
+          </span>
+          <span className="text-muted-foreground">
+            {milestones.filter((m) => m.done).length}/{milestones.length} milestones
+          </span>
         </div>
 
         <Collapsible open={openDetail} onOpenChange={setOpenDetail}>
@@ -238,21 +340,46 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
               <Label className="text-xs">Notes</Label>
               <Textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
             </div>
-            <Button size="sm" onClick={saveMeta}>Save details</Button>
+            <Button size="sm" onClick={saveMeta}>
+              Save details
+            </Button>
 
             <div className="space-y-1.5">
-              <Label className="text-xs flex items-center gap-1"><Target className="size-3" />Milestones</Label>
+              <Label className="text-xs flex items-center gap-1">
+                <Target className="size-3" />
+                Milestones
+              </Label>
               {milestones.map((m) => (
-                <div key={m.id} className="flex items-center gap-2 rounded-md border bg-card/40 px-2 py-1.5">
+                <div
+                  key={m.id}
+                  className="flex items-center gap-2 rounded-md border bg-card/40 px-2 py-1.5"
+                >
                   <Checkbox checked={m.done} onCheckedChange={() => toggleM(m.id)} />
-                  <span className={`flex-1 text-sm ${m.done ? "line-through text-muted-foreground" : ""}`}>{m.title}</span>
-                  <Button size="icon" variant="ghost" onClick={() => removeM(m.id)}><Trash2 className="size-3.5" /></Button>
+                  <span
+                    className={`flex-1 text-sm ${m.done ? "line-through text-muted-foreground" : ""}`}
+                  >
+                    {m.title}
+                  </span>
+                  <Button size="icon" variant="ghost" onClick={() => removeM(m.id)}>
+                    <Trash2 className="size-3.5" />
+                  </Button>
                 </div>
               ))}
               <div className="flex gap-2">
-                <Input placeholder="Add milestone…" value={newMilestone} onChange={(e) => setNewMilestone(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMilestone(); } }} />
-                <Button size="icon" onClick={addMilestone}><Plus className="size-4" /></Button>
+                <Input
+                  placeholder="Add milestone…"
+                  value={newMilestone}
+                  onChange={(e) => setNewMilestone(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addMilestone();
+                    }
+                  }}
+                />
+                <Button size="icon" onClick={addMilestone}>
+                  <Plus className="size-4" />
+                </Button>
               </div>
             </div>
           </CollapsibleContent>

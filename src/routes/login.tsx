@@ -6,7 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
@@ -33,10 +39,18 @@ function LoginPage() {
     <div>
       <Label>Password</Label>
       <div className="relative">
-        <Input type={showPw ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" />
-        <button type="button" onClick={() => setShowPw((v) => !v)}
+        <Input
+          type={showPw ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="pr-10"
+        />
+        <button
+          type="button"
+          onClick={() => setShowPw((v) => !v)}
           className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          aria-label={showPw ? "Hide password" : "Show password"}>
+          aria-label={showPw ? "Hide password" : "Show password"}
+        >
           {showPw ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
         </button>
       </div>
@@ -46,7 +60,10 @@ function LoginPage() {
   // Prefill remembered email
   useEffect(() => {
     const saved = localStorage.getItem("remember_email");
-    if (saved) { setEmail(saved); setName(localStorage.getItem("remember_name") ?? ""); }
+    if (saved) {
+      setEmail(saved);
+      setName(localStorage.getItem("remember_name") ?? "");
+    }
   }, []);
 
   useEffect(() => {
@@ -76,7 +93,8 @@ function LoginPage() {
   };
 
   const signUp = async () => {
-    if (phone && !/^\+?[0-9\s\-()]{7,20}$/.test(phone)) return toast.error("Enter a valid phone number");
+    if (phone && !/^\+?[0-9\s\-()]{7,20}$/.test(phone))
+      return toast.error("Enter a valid phone number");
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email,
@@ -110,11 +128,16 @@ function LoginPage() {
           <span className="font-display text-xl">90-Day Life OS</span>
         </Link>
         <div className="glass rounded-2xl p-6 sm:p-8">
-          <Link to="/" className="mb-4 flex items-center justify-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <Link
+            to="/"
+            className="mb-4 flex items-center justify-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="size-4" /> Back to home
           </Link>
           <h1 className="font-display text-2xl sm:text-3xl text-center">Begin your 90 days</h1>
-          <p className="mt-1 text-center text-sm text-muted-foreground">Sign in or create an account.</p>
+          <p className="mt-1 text-center text-sm text-muted-foreground">
+            Sign in or create an account.
+          </p>
 
           <Tabs defaultValue="signin" className="mt-6">
             <TabsList className="grid grid-cols-2 w-full">
@@ -122,26 +145,57 @@ function LoginPage() {
               <TabsTrigger value="signup">Sign up</TabsTrigger>
             </TabsList>
             <TabsContent value="signin" className="space-y-3 pt-4">
-              <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+              <div>
+                <Label>Email</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
               {pwField}
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
-                  <Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} /> Remember me
+                  <Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} /> Remember
+                  me
                 </label>
-                <button type="button" onClick={() => { setForgotEmail(email); setForgotOpen(true); }}
-                  className="text-xs text-primary hover:underline">Forgot password?</button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForgotEmail(email);
+                    setForgotOpen(true);
+                  }}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Forgot password?
+                </button>
               </div>
-              <Button className="w-full" onClick={signIn} disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
+              <Button className="w-full" onClick={signIn} disabled={busy}>
+                {busy ? "Signing in…" : "Sign in"}
+              </Button>
             </TabsContent>
             <TabsContent value="signup" className="space-y-3 pt-4">
-              <div><Label>Name</Label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
-              <div><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-              <div><Label>Phone (optional)</Label><Input type="tel" placeholder="+1 555 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
+              <div>
+                <Label>Name</Label>
+                <Input value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
+              <div>
+                <Label>Phone (optional)</Label>
+                <Input
+                  type="tel"
+                  placeholder="+1 555 123 4567"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
               {pwField}
               <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
-                <Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} /> Remember me on this device
+                <Checkbox checked={remember} onCheckedChange={(v) => setRemember(!!v)} /> Remember
+                me on this device
               </label>
-              <Button className="w-full" onClick={signUp} disabled={busy}>{busy ? "Creating…" : "Create account"}</Button>
+              <Button className="w-full" onClick={signUp} disabled={busy}>
+                {busy ? "Creating…" : "Create account"}
+              </Button>
             </TabsContent>
           </Tabs>
         </div>
@@ -154,8 +208,17 @@ function LoginPage() {
             <DialogDescription>We'll email you a secure link to set a new one.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
-            <div><Label>Email</Label><Input type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} /></div>
-            <Button onClick={sendReset} className="w-full">Send reset link</Button>
+            <div>
+              <Label>Email</Label>
+              <Input
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+              />
+            </div>
+            <Button onClick={sendReset} className="w-full">
+              Send reset link
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -19,7 +19,9 @@ function AppLayout() {
 
   if (loading || !user) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-muted-foreground">Loading…</div>
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Loading…
+      </div>
     );
   }
 

@@ -15,7 +15,13 @@ export const Route = createFileRoute("/_app/calendar")({
   head: () => ({ meta: [{ title: "Calendar - 90-Day Life OS" }] }),
 });
 
-type Item = { date: string; type: "task" | "goal" | "habit" | "finance" | "project"; title: string; meta?: string; to?: string };
+type Item = {
+  date: string;
+  type: "task" | "goal" | "habit" | "finance" | "project";
+  title: string;
+  meta?: string;
+  to?: string;
+};
 
 function CalendarPage() {
   const { user } = useAuth();
@@ -26,18 +32,76 @@ function CalendarPage() {
     queryKey: ["calendar-items", uid],
     queryFn: async () => {
       const [tasks, goals, habitLogs, finance, projects] = await Promise.all([
-        supabase.from("tasks").select("id,title,due_date,status").eq("user_id", uid).not("due_date", "is", null),
-        supabase.from("goals").select("id,title,target_date,category").eq("user_id", uid).not("target_date", "is", null),
-        supabase.from("habit_logs").select("id,log_date,habit_id,habits(name)").eq("user_id", uid).gte("log_date", format(new Date(Date.now() - 1000 * 60 * 60 * 24 * 120), "yyyy-MM-dd")),
-        supabase.from("finance_entries" as any).select("id,entry_date,kind,amount,note,category").eq("user_id", uid),
-        supabase.from("projects").select("id,name,deadline").eq("user_id", uid).not("deadline", "is", null),
+        supabase
+          .from("tasks")
+          .select("id,title,due_date,status")
+          .eq("user_id", uid)
+          .not("due_date", "is", null),
+        supabase
+          .from("goals")
+          .select("id,title,target_date,category")
+          .eq("user_id", uid)
+          .not("target_date", "is", null),
+        supabase
+          .from("habit_logs")
+          .select("id,log_date,habit_id,habits(name)")
+          .eq("user_id", uid)
+          .gte("log_date", format(new Date(Date.now() - 1000 * 60 * 60 * 24 * 120), "yyyy-MM-dd")),
+        supabase
+          .from("finance_entries" as any)
+          .select("id,entry_date,kind,amount,note,category")
+          .eq("user_id", uid),
+        supabase
+          .from("projects")
+          .select("id,name,deadline")
+          .eq("user_id", uid)
+          .not("deadline", "is", null),
       ]);
       const items: Item[] = [];
-      (tasks.data ?? []).forEach((t: any) => items.push({ date: t.due_date, type: "task", title: t.title, meta: t.status, to: "/projects" }));
-      (goals.data ?? []).forEach((g: any) => items.push({ date: g.target_date, type: "goal", title: g.title, meta: g.category, to: "/goals" }));
-      (habitLogs.data ?? []).forEach((h: any) => items.push({ date: h.log_date, type: "habit", title: h.habits?.name ?? "Habit", to: "/daily" }));
-      (finance.data ?? []).forEach((f: any) => items.push({ date: f.entry_date, type: "finance", title: f.note || f.category, meta: `${f.kind === "income" ? "+" : "-"}$${Number(f.amount).toFixed(2)}`, to: "/finances" }));
-      (projects.data ?? []).forEach((p: any) => items.push({ date: p.deadline, type: "project", title: p.name, meta: "deadline", to: "/projects" }));
+      (tasks.data ?? []).forEach((t: any) =>
+        items.push({
+          date: t.due_date,
+          type: "task",
+          title: t.title,
+          meta: t.status,
+          to: "/projects",
+        }),
+      );
+      (goals.data ?? []).forEach((g: any) =>
+        items.push({
+          date: g.target_date,
+          type: "goal",
+          title: g.title,
+          meta: g.category,
+          to: "/goals",
+        }),
+      );
+      (habitLogs.data ?? []).forEach((h: any) =>
+        items.push({
+          date: h.log_date,
+          type: "habit",
+          title: h.habits?.name ?? "Habit",
+          to: "/daily",
+        }),
+      );
+      (finance.data ?? []).forEach((f: any) =>
+        items.push({
+          date: f.entry_date,
+          type: "finance",
+          title: f.note || f.category,
+          meta: `${f.kind === "income" ? "+" : "-"}$${Number(f.amount).toFixed(2)}`,
+          to: "/finances",
+        }),
+      );
+      (projects.data ?? []).forEach((p: any) =>
+        items.push({
+          date: p.deadline,
+          type: "project",
+          title: p.name,
+          meta: "deadline",
+          to: "/projects",
+        }),
+      );
       return items;
     },
   });
@@ -63,8 +127,12 @@ function CalendarPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-3xl flex items-center gap-2"><CalendarDays className="size-7" /> Calendar</h1>
-        <p className="text-muted-foreground text-sm">Tasks, goals, habits, projects and finance in one view.</p>
+        <h1 className="font-display text-3xl flex items-center gap-2">
+          <CalendarDays className="size-7" /> Calendar
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          Tasks, goals, habits, projects and finance in one view.
+        </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
@@ -75,22 +143,33 @@ function CalendarPage() {
               selected={selected}
               onSelect={(d) => d && setSelected(d)}
               modifiers={modifiers}
-              modifiersClassNames={{ hasItems: "relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:size-1 after:rounded-full after:bg-primary" }}
+              modifiersClassNames={{
+                hasItems:
+                  "relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:size-1 after:rounded-full after:bg-primary",
+              }}
               className="p-2 pointer-events-auto w-full max-w-full [&_table]:w-full [&_td]:p-0 [&_th]:p-0"
             />
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><CardTitle className="text-base">{format(selected, "EEEE, MMM d")}</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base">{format(selected, "EEEE, MMM d")}</CardTitle>
+          </CardHeader>
           <CardContent>
             {q.isLoading ? (
-              <div className="space-y-2">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12" />
+                ))}
+              </div>
             ) : todays.length === 0 ? (
               <div className="text-sm text-muted-foreground">Nothing scheduled.</div>
             ) : (
               <ul className="space-y-2">
-                {todays.map((it, i) => <ItemRow key={i} item={it} />)}
+                {todays.map((it, i) => (
+                  <ItemRow key={i} item={it} />
+                ))}
               </ul>
             )}
           </CardContent>
@@ -98,7 +177,9 @@ function CalendarPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Upcoming</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-base">Upcoming</CardTitle>
+        </CardHeader>
         <CardContent>
           {q.isLoading ? (
             <Skeleton className="h-24" />
@@ -110,7 +191,9 @@ function CalendarPage() {
                 .slice(0, 15)
                 .map((it, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm">
-                    <span className="text-xs text-muted-foreground w-20 shrink-0">{format(parseISO(it.date), "MMM d")}</span>
+                    <span className="text-xs text-muted-foreground w-20 shrink-0">
+                      {format(parseISO(it.date), "MMM d")}
+                    </span>
                     <ItemRow item={it} compact />
                   </li>
                 ))}
@@ -123,7 +206,11 @@ function CalendarPage() {
 }
 
 const typeIcon = {
-  task: ListChecks, goal: Target, habit: ListChecks, finance: DollarSign, project: Kanban,
+  task: ListChecks,
+  goal: Target,
+  habit: ListChecks,
+  finance: DollarSign,
+  project: Kanban,
 } as const;
 const typeColor = {
   task: "bg-blue-500/15 text-blue-500",
@@ -136,11 +223,27 @@ const typeColor = {
 function ItemRow({ item, compact }: { item: Item; compact?: boolean }) {
   const Icon = typeIcon[item.type];
   const body = (
-    <div className={`flex items-center gap-2 rounded-md ${compact ? "" : "border p-2.5"} flex-1 min-w-0`}>
-      <span className={`size-6 rounded-md inline-flex items-center justify-center ${typeColor[item.type]}`}><Icon className="size-3.5" /></span>
+    <div
+      className={`flex items-center gap-2 rounded-md ${compact ? "" : "border p-2.5"} flex-1 min-w-0`}
+    >
+      <span
+        className={`size-6 rounded-md inline-flex items-center justify-center ${typeColor[item.type]}`}
+      >
+        <Icon className="size-3.5" />
+      </span>
       <span className="text-sm truncate flex-1">{item.title}</span>
-      {item.meta && <Badge variant="secondary" className="text-[10px]">{item.meta}</Badge>}
+      {item.meta && (
+        <Badge variant="secondary" className="text-[10px]">
+          {item.meta}
+        </Badge>
+      )}
     </div>
   );
-  return item.to ? <Link to={item.to} className="contents">{body}</Link> : body;
+  return item.to ? (
+    <Link to={item.to} className="contents">
+      {body}
+    </Link>
+  ) : (
+    body
+  );
 }

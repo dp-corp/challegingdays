@@ -16,7 +16,7 @@ const BADGES: Record<string, { title: string; description: string }> = {
 
 function currentStreak(scores: Score[]) {
   const map = new Map(scores.map((s) => [s.date, s.score]));
-  let d = new Date();
+  const d = new Date();
   let run = 0;
   // walk back day by day from today
   for (let i = 0; i < 365; i++) {

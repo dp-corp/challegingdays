@@ -124,24 +124,54 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html, body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
-  html { scrollbar-color: color-mix(in oklab, var(--color-primary) 55%, transparent) transparent; scrollbar-width: thin; }
+  * {
+    border-color: var(--color-border);
+  }
+  html,
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  html {
+    scrollbar-color: color-mix(in oklab, var(--color-primary) 55%, transparent) transparent;
+    scrollbar-width: thin;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     background-image:
-      radial-gradient(ellipse 60% 40% at 50% -10%, color-mix(in oklab, var(--color-primary) 10%, transparent), transparent),
-      radial-gradient(ellipse 50% 30% at 100% 100%, color-mix(in oklab, var(--color-accent) 6%, transparent), transparent);
+      radial-gradient(
+        ellipse 60% 40% at 50% -10%,
+        color-mix(in oklab, var(--color-primary) 10%, transparent),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 50% 30% at 100% 100%,
+        color-mix(in oklab, var(--color-accent) 6%, transparent),
+        transparent
+      );
     background-attachment: fixed;
   }
-  .font-display { font-family: var(--font-display); letter-spacing: -0.025em; font-weight: 700; }
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
 
   /* Themed scrollbars */
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, color-mix(in oklab, var(--color-primary) 60%, transparent), color-mix(in oklab, var(--color-accent) 60%, transparent));
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-primary) 60%, transparent),
+      color-mix(in oklab, var(--color-accent) 60%, transparent)
+    );
     border-radius: 999px;
     border: 2px solid transparent;
     background-clip: padding-box;
@@ -165,11 +195,16 @@
     background-clip: text;
     color: transparent;
   }
-  .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: 0% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
-

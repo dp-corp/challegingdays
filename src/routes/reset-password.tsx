@@ -35,8 +35,13 @@ function ResetPasswordPage() {
         </Link>
         <div className="glass rounded-2xl p-6 sm:p-8 space-y-4">
           <h1 className="font-display text-2xl text-center">Set a new password</h1>
-          <div><Label>New password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
-          <Button className="w-full" onClick={submit} disabled={busy}>{busy ? "Saving…" : "Update password"}</Button>
+          <div>
+            <Label>New password</Label>
+            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </div>
+          <Button className="w-full" onClick={submit} disabled={busy}>
+            {busy ? "Saving…" : "Update password"}
+          </Button>
         </div>
       </div>
     </div>

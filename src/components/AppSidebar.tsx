@@ -1,5 +1,19 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Compass, Target, ListChecks, Kanban, ClipboardCheck, Sparkles, BarChart3, User, LogOut, Menu, DollarSign, CalendarDays } from "lucide-react";
+import {
+  LayoutDashboard,
+  Compass,
+  Target,
+  ListChecks,
+  Kanban,
+  ClipboardCheck,
+  Sparkles,
+  BarChart3,
+  User,
+  LogOut,
+  Menu,
+  DollarSign,
+  CalendarDays,
+} from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet";
@@ -51,7 +65,9 @@ export function AppSidebar() {
         <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-accent" />
         <div className="leading-tight">
           <div className="font-display text-base">90-Day Life OS</div>
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Operating system</div>
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            Operating system
+          </div>
         </div>
       </div>
       <NavLinks />
@@ -74,7 +90,9 @@ export function MobileTopBar() {
       </Link>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon"><Menu className="size-5" /></Button>
+          <Button variant="ghost" size="icon">
+            <Menu className="size-5" />
+          </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-72 p-0 flex flex-col">
           <SheetHeader className="p-5 border-b">
@@ -82,7 +100,11 @@ export function MobileTopBar() {
           </SheetHeader>
           <NavLinks />
           <div className="border-t p-3">
-            <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => signOut()}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3"
+              onClick={() => signOut()}
+            >
               <LogOut className="size-4" /> Sign out
             </Button>
           </div>
@@ -100,7 +122,11 @@ export function MobileNav() {
       {bottom.map(({ to, icon: Icon, label }) => {
         const active = path === to || path.startsWith(to + "/");
         return (
-          <Link key={to} to={to} className={`flex flex-col items-center gap-0.5 py-2 text-[10px] ${active ? "text-primary" : "text-muted-foreground"}`}>
+          <Link
+            key={to}
+            to={to}
+            className={`flex flex-col items-center gap-0.5 py-2 text-[10px] ${active ? "text-primary" : "text-muted-foreground"}`}
+          >
             <Icon className="size-5" /> {label}
           </Link>
         );

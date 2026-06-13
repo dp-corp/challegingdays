@@ -11,10 +11,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { LogOut, Download, Bell, Moon, Upload, Palette, Check, KeyRound, RotateCcw } from "lucide-react";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+  LogOut,
+  Download,
+  Bell,
+  Moon,
+  Upload,
+  Palette,
+  Check,
+  KeyRound,
+  RotateCcw,
+} from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DatePicker } from "@/components/DatePicker";
 
@@ -52,7 +69,14 @@ function ProfilePage() {
   });
   const achievementsQ = useQuery({
     queryKey: ["achievements", uid],
-    queryFn: async () => (await supabase.from("achievements").select("*").eq("user_id", uid).order("earned_at", { ascending: false })).data ?? [],
+    queryFn: async () =>
+      (
+        await supabase
+          .from("achievements")
+          .select("*")
+          .eq("user_id", uid)
+          .order("earned_at", { ascending: false })
+      ).data ?? [],
   });
 
   const [name, setName] = useState("");
@@ -83,10 +107,15 @@ function ProfilePage() {
   }, []);
 
   const save = async () => {
-    const { error } = await supabase.from("profiles").update({
-      display_name: name, avatar_url: avatar || null,
-      challenge_start_date: start ?? undefined, updated_at: new Date().toISOString(),
-    }).eq("id", uid);
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        display_name: name,
+        avatar_url: avatar || null,
+        challenge_start_date: start ?? undefined,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", uid);
     if (error) return toast.error(error.message);
     localStorage.setItem("bio", bio);
     toast.success("Profile saved");
@@ -107,18 +136,30 @@ function ProfilePage() {
     }
   };
 
-  const pickTheme = (n: string) => { setTheme(n); applyTheme(n); toast.success(`${n} theme applied`); };
+  const pickTheme = (n: string) => {
+    setTheme(n);
+    applyTheme(n);
+    toast.success(`${n} theme applied`);
+  };
 
   const onUpload = async (file: File) => {
     if (file.size > 5 * 1024 * 1024) return toast.error("Max 5MB");
     setUploading(true);
     const ext = file.name.split(".").pop() ?? "jpg";
     const path = `${uid}/${Date.now()}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-    if (upErr) { setUploading(false); return toast.error(upErr.message); }
+    const { error: upErr } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, { upsert: true });
+    if (upErr) {
+      setUploading(false);
+      return toast.error(upErr.message);
+    }
     const { data } = supabase.storage.from("avatars").getPublicUrl(path);
     setAvatar(data.publicUrl);
-    await supabase.from("profiles").update({ avatar_url: data.publicUrl, updated_at: new Date().toISOString() }).eq("id", uid);
+    await supabase
+      .from("profiles")
+      .update({ avatar_url: data.publicUrl, updated_at: new Date().toISOString() })
+      .eq("id", uid);
     setUploading(false);
     toast.success("Avatar uploaded");
     q.refetch();
@@ -133,11 +174,27 @@ function ProfilePage() {
     const csv = (rows: any[]) => {
       if (!rows.length) return "";
       const keys = Object.keys(rows[0]);
-      return [keys.join(","), ...rows.map((r) => keys.map((k) => JSON.stringify(r[k] ?? "")).join(","))].join("\n");
+      return [
+        keys.join(","),
+        ...rows.map((r) => keys.map((k) => JSON.stringify(r[k] ?? "")).join(",")),
+      ].join("\n");
     };
-    const blob = new Blob(["# scores\n", csv(scores.data ?? []), "\n\n# habit_logs\n", csv(habits.data ?? []), "\n\n# goals\n", csv(goals.data ?? [])], { type: "text/csv" });
+    const blob = new Blob(
+      [
+        "# scores\n",
+        csv(scores.data ?? []),
+        "\n\n# habit_logs\n",
+        csv(habits.data ?? []),
+        "\n\n# goals\n",
+        csv(goals.data ?? []),
+      ],
+      { type: "text/csv" },
+    );
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = `90-day-os-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `90-day-os-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
     URL.revokeObjectURL(url);
     toast.success("Export downloaded");
   };
@@ -158,14 +215,30 @@ function ProfilePage() {
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
             <div className="relative">
               <div className="size-20 rounded-full bg-gradient-to-br from-primary to-accent overflow-hidden flex items-center justify-center text-white text-2xl font-semibold">
-                {avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : (name?.[0] ?? user?.email?.[0] ?? "U").toUpperCase()}
+                {avatar ? (
+                  <img src={avatar} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  (name?.[0] ?? user?.email?.[0] ?? "U").toUpperCase()
+                )}
               </div>
-              <button type="button" onClick={() => fileRef.current?.click()}
-                className="absolute -bottom-1 -right-1 size-8 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:scale-105 transition">
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="absolute -bottom-1 -right-1 size-8 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:scale-105 transition"
+              >
                 <Upload className="size-4" />
               </button>
-              <input ref={fileRef} type="file" accept="image/*" className="hidden"
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }} />
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) onUpload(f);
+                  e.target.value = "";
+                }}
+              />
             </div>
             <div className="flex-1 min-w-0 text-center sm:text-left">
               <div className="text-sm font-medium truncate">{name || "Unnamed"}</div>
@@ -174,36 +247,78 @@ function ProfilePage() {
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div><Label>Display name</Label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
-            <div><Label>Avatar URL</Label><Input value={avatar} onChange={(e) => setAvatar(e.target.value)} placeholder="https://… or upload" /></div>
+            <div>
+              <Label>Display name</Label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} />
+            </div>
+            <div>
+              <Label>Avatar URL</Label>
+              <Input
+                value={avatar}
+                onChange={(e) => setAvatar(e.target.value)}
+                placeholder="https://… or upload"
+              />
+            </div>
             <div>
               <Label>Challenge start date (Day 1)</Label>
               <div className="flex gap-2">
-                <div className="flex-1"><DatePicker value={start} onChange={setStart} /></div>
-                <Button type="button" variant="outline" onClick={() => setStart(new Date().toISOString().slice(0, 10))}>Today</Button>
+                <div className="flex-1">
+                  <DatePicker value={start} onChange={setStart} />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setStart(new Date().toISOString().slice(0, 10))}
+                >
+                  Today
+                </Button>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">Sets where Day 1 of your 90 days begins.</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Sets where Day 1 of your 90 days begins.
+              </p>
             </div>
-            <div><Label>Email</Label><Input value={user?.email ?? ""} disabled /></div>
+            <div>
+              <Label>Email</Label>
+              <Input value={user?.email ?? ""} disabled />
+            </div>
           </div>
-          <div><Label>Bio</Label><Textarea rows={3} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Why this 90 days matters to you." /></div>
+          <div>
+            <Label>Bio</Label>
+            <Textarea
+              rows={3}
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Why this 90 days matters to you."
+            />
+          </div>
           <Button onClick={save}>Save profile</Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Palette className="size-4" />Color theme</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Palette className="size-4" />
+            Color theme
+          </CardTitle>
           <CardDescription>Personalize your accent color.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
             {THEMES.map((t) => (
-              <button key={t.name} type="button" onClick={() => pickTheme(t.name)}
+              <button
+                key={t.name}
+                type="button"
+                onClick={() => pickTheme(t.name)}
                 className={`group relative aspect-square rounded-xl border-2 transition ${theme === t.name ? "border-foreground" : "border-transparent hover:border-border"}`}
-                style={{ background: `linear-gradient(135deg, ${t.primary}, ${t.accent})` }}>
-                {theme === t.name && <Check className="absolute inset-0 m-auto size-5 text-white drop-shadow" />}
-                <span className="absolute -bottom-5 left-0 right-0 text-center text-[10px] text-muted-foreground">{t.name}</span>
+                style={{ background: `linear-gradient(135deg, ${t.primary}, ${t.accent})` }}
+              >
+                {theme === t.name && (
+                  <Check className="absolute inset-0 m-auto size-5 text-white drop-shadow" />
+                )}
+                <span className="absolute -bottom-5 left-0 right-0 text-center text-[10px] text-muted-foreground">
+                  {t.name}
+                </span>
               </button>
             ))}
           </div>
@@ -211,85 +326,154 @@ function ProfilePage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Preferences</CardTitle><CardDescription>App-wide settings.</CardDescription></CardHeader>
+        <CardHeader>
+          <CardTitle>Preferences</CardTitle>
+          <CardDescription>App-wide settings.</CardDescription>
+        </CardHeader>
         <CardContent className="space-y-1">
           <Row icon={<Moon className="size-4" />} title="Dark mode" desc="Use the dark theme.">
             <Switch checked={dark} onCheckedChange={toggleDark} />
           </Row>
           <Separator />
-          <Row icon={<Bell className="size-4" />} title="Daily reminders" desc="Browser notifications for your evening reflection.">
+          <Row
+            icon={<Bell className="size-4" />}
+            title="Daily reminders"
+            desc="Browser notifications for your evening reflection."
+          >
             <Switch checked={reminders} onCheckedChange={toggleReminders} />
           </Row>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Data</CardTitle><CardDescription>Export everything as CSV.</CardDescription></CardHeader>
+        <CardHeader>
+          <CardTitle>Data</CardTitle>
+          <CardDescription>Export everything as CSV.</CardDescription>
+        </CardHeader>
         <CardContent>
-          <Button variant="outline" onClick={exportCsv}><Download className="size-4 mr-2" />Export to CSV</Button>
+          <Button variant="outline" onClick={exportCsv}>
+            <Download className="size-4 mr-2" />
+            Export to CSV
+          </Button>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Badges earned</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Badges earned</CardTitle>
+        </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          {(achievementsQ.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">No badges yet. Complete day 1 to earn your first.</p>}
+          {(achievementsQ.data ?? []).length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              No badges yet. Complete day 1 to earn your first.
+            </p>
+          )}
           {(achievementsQ.data ?? []).map((a) => (
-            <div key={a.id} className="rounded-full border bg-accent/10 px-3 py-1 text-xs">🏆 {a.title}</div>
+            <div key={a.id} className="rounded-full border bg-accent/10 px-3 py-1 text-xs">
+              🏆 {a.title}
+            </div>
           ))}
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Account</CardTitle><CardDescription>Reset password, wipe data, or sign out.</CardDescription></CardHeader>
+        <CardHeader>
+          <CardTitle>Account</CardTitle>
+          <CardDescription>Reset password, wipe data, or sign out.</CardDescription>
+        </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={async () => {
-            if (!user?.email) return;
-            const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-              redirectTo: `${window.location.origin}/reset-password`,
-            });
-            if (error) return toast.error(error.message);
-            toast.success("Password reset link sent to your email.");
-          }}><KeyRound className="size-4 mr-2" />Reset password</Button>
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (!user?.email) return;
+              const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+                redirectTo: `${window.location.origin}/reset-password`,
+              });
+              if (error) return toast.error(error.message);
+              toast.success("Password reset link sent to your email.");
+            }}
+          >
+            <KeyRound className="size-4 mr-2" />
+            Reset password
+          </Button>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="outline" className="text-destructive hover:text-destructive">
-                <RotateCcw className="size-4 mr-2" />Reset account
+                <RotateCcw className="size-4 mr-2" />
+                Reset account
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Reset your account?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This permanently deletes all your goals, projects, tasks, habits, logs, reflections, reviews, foundation, scores, and badges. Your login stays. This cannot be undone.
+                  This permanently deletes all your goals, projects, tasks, habits, logs,
+                  reflections, reviews, foundation, scores, and badges. Your login stays. This
+                  cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={async () => {
-                  const tables = ["tasks","projects","goals","habit_logs","habits","reflections","weekly_reviews","scores","achievements","foundation"] as const;
-                  for (const t of tables) {
-                    await supabase.from(t as any).delete().eq("user_id", uid);
-                  }
-                  await supabase.from("profiles").update({ challenge_start_date: new Date().toISOString().slice(0, 10), updated_at: new Date().toISOString() }).eq("id", uid);
-                  localStorage.removeItem("bio");
-                  toast.success("Account reset. Starting fresh.");
-                  setTimeout(() => window.location.assign("/dashboard"), 600);
-                }}>Reset everything</AlertDialogAction>
+                <AlertDialogAction
+                  onClick={async () => {
+                    const tables = [
+                      "tasks",
+                      "projects",
+                      "goals",
+                      "habit_logs",
+                      "habits",
+                      "reflections",
+                      "weekly_reviews",
+                      "scores",
+                      "achievements",
+                      "foundation",
+                    ] as const;
+                    for (const t of tables) {
+                      await supabase
+                        .from(t as any)
+                        .delete()
+                        .eq("user_id", uid);
+                    }
+                    await supabase
+                      .from("profiles")
+                      .update({
+                        challenge_start_date: new Date().toISOString().slice(0, 10),
+                        updated_at: new Date().toISOString(),
+                      })
+                      .eq("id", uid);
+                    localStorage.removeItem("bio");
+                    toast.success("Account reset. Starting fresh.");
+                    setTimeout(() => window.location.assign("/dashboard"), 600);
+                  }}
+                >
+                  Reset everything
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
 
-          <Button variant="outline" onClick={() => signOut()}><LogOut className="size-4 mr-2" />Sign out</Button>
+          <Button variant="outline" onClick={() => signOut()}>
+            <LogOut className="size-4 mr-2" />
+            Sign out
+          </Button>
         </CardContent>
       </Card>
-
     </div>
   );
 }
 
-function Row({ icon, title, desc, children }: { icon: React.ReactNode; title: string; desc: string; children: React.ReactNode }) {
+function Row({
+  icon,
+  title,
+  desc,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex items-center justify-between py-3 gap-4">
       <div className="flex items-start gap-3 min-w-0">

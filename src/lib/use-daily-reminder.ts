@@ -36,15 +36,21 @@ export function useDailyReminder() {
       const today = new Date().toISOString().slice(0, 10);
       if (last === today) return;
       const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-      new Notification("90-Day Life OS - Evening reflection", { body: quote, icon: "/favicon.ico" });
+      new Notification("90-Day Life OS - Evening reflection", {
+        body: quote,
+        icon: "/favicon.ico",
+      });
       localStorage.setItem("reminder_last", today);
     };
 
     const schedule = () => {
-      timer = window.setTimeout(() => {
-        fire();
-        schedule();
-      }, msUntilNext(REMINDER_HOUR, REMINDER_MIN));
+      timer = window.setTimeout(
+        () => {
+          fire();
+          schedule();
+        },
+        msUntilNext(REMINDER_HOUR, REMINDER_MIN),
+      );
     };
 
     schedule();
