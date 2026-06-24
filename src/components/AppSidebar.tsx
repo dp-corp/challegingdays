@@ -13,6 +13,7 @@ import {
   Menu,
   DollarSign,
   CalendarDays,
+  Dumbbell,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ const items = [
   { to: "/foundation", icon: Compass, label: "Foundation" },
   { to: "/goals", icon: Target, label: "Goals" },
   { to: "/daily", icon: ListChecks, label: "Daily" },
+  { to: "/gym", icon: Dumbbell, label: "Gym" },
   { to: "/projects", icon: Kanban, label: "Projects" },
   { to: "/calendar", icon: CalendarDays, label: "Calendar" },
   { to: "/finances", icon: DollarSign, label: "Finances" },

@@ -34,6 +34,13 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { DatePicker } from "@/components/DatePicker";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { todayISO } from "@/lib/challenge";
 import { format, subDays, differenceInCalendarDays } from "date-fns";
 
@@ -81,6 +88,12 @@ function ProjectDetail() {
           .eq("active", true)
           .order("created_at")
       ).data ?? [],
+  });
+
+  const goalsQ = useQuery({
+    queryKey: ["goals", uid],
+    queryFn: async () =>
+      (await supabase.from("goals").select("id, title").eq("user_id", uid)).data ?? [],
   });
 
   const habitIds = (habitsQ.data ?? []).map((h) => h.id);
@@ -155,7 +168,7 @@ function ProjectDetail() {
 
   // ---------- Tasks (one-off) ----------
   const [open, setOpen] = useState(false);
-  const blank = { title: "", description: "", due_date: null as string | null };
+  const blank = { title: "", description: "", due_date: null as string | null, task_type: "daily", goal_id: "none" };
   const [form, setForm] = useState(blank);
 
   const [editTaskOpen, setEditTaskOpen] = useState(false);
@@ -164,7 +177,7 @@ function ProjectDetail() {
 
   const startEditTask = (t: any) => {
     setEditTaskId(t.id);
-    setEditForm({ title: t.title, description: t.description ?? "", due_date: t.due_date });
+    setEditForm({ title: t.title, description: t.description ?? "", due_date: t.due_date, task_type: t.task_type ?? "daily", goal_id: t.goal_id ?? "none" });
     setEditTaskOpen(true);
   };
 
@@ -177,6 +190,8 @@ function ProjectDetail() {
         title: editForm.title.trim(),
         description: editForm.description,
         due_date: editForm.due_date || null,
+        task_type: editForm.task_type,
+        goal_id: editForm.goal_id === "none" ? null : editForm.goal_id,
         updated_at: new Date().toISOString(),
       })
       .eq("id", editTaskId);
@@ -196,6 +211,8 @@ function ProjectDetail() {
       description: form.description,
       due_date: form.due_date || null,
       status: "backlog",
+      task_type: form.task_type,
+      goal_id: form.goal_id === "none" ? null : form.goal_id,
     });
     setForm(blank);
     setOpen(false);
@@ -419,6 +436,35 @@ function ProjectDetail() {
                       onChange={(e) => setForm({ ...form, description: e.target.value })}
                     />
                   </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label>Task Type</Label>
+                      <Select value={form.task_type} onValueChange={(v) => setForm({ ...form, task_type: v })}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="daily">Daily Task</SelectItem>
+                          <SelectItem value="weekly">Weekly Task</SelectItem>
+                          <SelectItem value="monthly">Monthly Task</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Linked Goal</Label>
+                      <Select value={form.goal_id} onValueChange={(v) => setForm({ ...form, goal_id: v })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="No goal" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {(goalsQ.data ?? []).map((g) => (
+                            <SelectItem key={g.id} value={g.id}>{g.title}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                   <div>
                     <Label>Due date</Label>
                     <DatePicker
@@ -605,8 +651,8 @@ function ProjectDetail() {
                           <CardContent className="p-3 relative group">
                             <div className="text-sm pr-12">{t.title}</div>
                             {daysRemaining !== null && (
-                              <div className="text-xs font-bold text-accent mt-1 bg-accent/10 px-2 py-0.5 rounded-md inline-block">
-                                {daysRemaining >= 0 ? `${daysRemaining} days left` : "Overdue"}
+                              <div className={`text-xs font-bold mt-1 px-2 py-0.5 rounded-md inline-block ${daysRemaining >= 0 ? "text-accent bg-accent/10" : "text-rose-500 bg-rose-500/10"}`}>
+                                {daysRemaining >= 0 ? `${daysRemaining} days left` : `Overdue (${daysRemaining}d)`}
                               </div>
                             )}
                             <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
@@ -718,6 +764,35 @@ function ProjectDetail() {
                 value={editForm.description}
                 onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
               />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label>Task Type</Label>
+                <Select value={editForm.task_type} onValueChange={(v) => setEditForm({ ...editForm, task_type: v })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily Task</SelectItem>
+                    <SelectItem value="weekly">Weekly Task</SelectItem>
+                    <SelectItem value="monthly">Monthly Task</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Linked Goal</Label>
+                <Select value={editForm.goal_id} onValueChange={(v) => setEditForm({ ...editForm, goal_id: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="No goal" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    {(goalsQ.data ?? []).map((g) => (
+                      <SelectItem key={g.id} value={g.id}>{g.title}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <div>
               <Label>Due date</Label>

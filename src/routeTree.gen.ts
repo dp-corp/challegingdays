@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppReviewRouteImport } from './routes/_app/review'
 import { Route as AppReflectionsRouteImport } from './routes/_app/reflections'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppGymRouteImport } from './routes/_app/gym'
 import { Route as AppGoalsRouteImport } from './routes/_app/goals'
 import { Route as AppFoundationRouteImport } from './routes/_app/foundation'
 import { Route as AppFinancesRouteImport } from './routes/_app/finances'
@@ -59,6 +60,11 @@ const AppReflectionsRoute = AppReflectionsRouteImport.update({
 const AppProfileRoute = AppProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGymRoute = AppGymRouteImport.update({
+  id: '/gym',
+  path: '/gym',
   getParentRoute: () => AppRoute,
 } as any)
 const AppGoalsRoute = AppGoalsRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/finances': typeof AppFinancesRoute
   '/foundation': typeof AppFoundationRoute
   '/goals': typeof AppGoalsRoute
+  '/gym': typeof AppGymRoute
   '/profile': typeof AppProfileRoute
   '/reflections': typeof AppReflectionsRoute
   '/review': typeof AppReviewRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/finances': typeof AppFinancesRoute
   '/foundation': typeof AppFoundationRoute
   '/goals': typeof AppGoalsRoute
+  '/gym': typeof AppGymRoute
   '/profile': typeof AppProfileRoute
   '/reflections': typeof AppReflectionsRoute
   '/review': typeof AppReviewRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/_app/finances': typeof AppFinancesRoute
   '/_app/foundation': typeof AppFoundationRoute
   '/_app/goals': typeof AppGoalsRoute
+  '/_app/gym': typeof AppGymRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/reflections': typeof AppReflectionsRoute
   '/_app/review': typeof AppReviewRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/finances'
     | '/foundation'
     | '/goals'
+    | '/gym'
     | '/profile'
     | '/reflections'
     | '/review'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/finances'
     | '/foundation'
     | '/goals'
+    | '/gym'
     | '/profile'
     | '/reflections'
     | '/review'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/_app/finances'
     | '/_app/foundation'
     | '/_app/goals'
+    | '/_app/gym'
     | '/_app/profile'
     | '/_app/reflections'
     | '/_app/review'
@@ -282,6 +294,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/gym': {
+      id: '/_app/gym'
+      path: '/gym'
+      fullPath: '/gym'
+      preLoaderRoute: typeof AppGymRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/goals': {
@@ -365,6 +384,7 @@ interface AppRouteChildren {
   AppFinancesRoute: typeof AppFinancesRoute
   AppFoundationRoute: typeof AppFoundationRoute
   AppGoalsRoute: typeof AppGoalsRoute
+  AppGymRoute: typeof AppGymRoute
   AppProfileRoute: typeof AppProfileRoute
   AppReflectionsRoute: typeof AppReflectionsRoute
   AppReviewRoute: typeof AppReviewRoute
@@ -381,6 +401,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFinancesRoute: AppFinancesRoute,
   AppFoundationRoute: AppFoundationRoute,
   AppGoalsRoute: AppGoalsRoute,
+  AppGymRoute: AppGymRoute,
   AppProfileRoute: AppProfileRoute,
   AppReflectionsRoute: AppReflectionsRoute,
   AppReviewRoute: AppReviewRoute,

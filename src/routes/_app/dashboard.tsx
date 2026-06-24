@@ -108,6 +108,18 @@ function Dashboard() {
     },
   });
 
+  const projectsQ = useQuery({
+    queryKey: ["projects-dash", uid],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("user_id", uid)
+        .order("created_at");
+      return data ?? [];
+    },
+  });
+
   const achievementsQ = useQuery({
     queryKey: ["achievements", uid],
     queryFn: async () => {
@@ -392,31 +404,131 @@ function Dashboard() {
                 No goals yet. Add them in the Goals tab.
               </p>
             )}
-            {(goalsQ.data ?? []).map((g) => {
-              const daysRemaining = g.target_date
-                ? differenceInCalendarDays(new Date(g.target_date), new Date())
-                : null;
-              return (
-                <div key={g.id}>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-2">
-                      <Target className="size-3.5 text-primary" />
-                      {g.title}
-                    </span>
-                    <span className="text-muted-foreground flex items-center gap-2 text-xs">
-                      {daysRemaining !== null && (
-                        <span className="text-accent font-medium">
-                          {daysRemaining >= 0 ? `${daysRemaining}d left` : "Overdue"}
+            
+            {/* Monthly Goals */}
+            {(goalsQ.data ?? []).filter((g: any) => g.goal_type !== "weekly").length > 0 && (
+              <div className="space-y-2">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Monthly Goals</div>
+                {(goalsQ.data ?? []).filter((g: any) => g.goal_type !== "weekly").map((g: any) => {
+                  const daysRemaining = g.target_date
+                    ? differenceInCalendarDays(new Date(g.target_date), new Date())
+                    : null;
+                  return (
+                    <div key={g.id}>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="flex items-center gap-2">
+                          <Target className="size-3.5 text-primary" />
+                          {g.title}
                         </span>
-                      )}
-                      <span className="text-muted-foreground">•</span>
-                      <span>{g.progress}%</span>
-                    </span>
+                        <span className="text-muted-foreground flex items-center gap-2 text-xs">
+                          {daysRemaining !== null && (
+                            <span className={daysRemaining >= 0 ? "text-accent font-medium" : "text-rose-500 font-medium"}>
+                              {daysRemaining >= 0 ? `${daysRemaining}d left` : `Overdue (${daysRemaining}d)`}
+                            </span>
+                          )}
+                          <span className="text-muted-foreground">•</span>
+                          <span>{g.progress}%</span>
+                        </span>
+                      </div>
+                      <Progress value={g.progress} className="mt-1.5 h-1.5" />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Weekly Goals */}
+            {(goalsQ.data ?? []).filter((g: any) => g.goal_type === "weekly").length > 0 && (
+              <div className="space-y-2 mt-4">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Weekly Goals</div>
+                {(goalsQ.data ?? []).filter((g: any) => g.goal_type === "weekly").map((g: any) => {
+                  const daysRemaining = g.target_date
+                    ? differenceInCalendarDays(new Date(g.target_date), new Date())
+                    : null;
+                  return (
+                    <div key={g.id}>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="flex items-center gap-2">
+                          <Target className="size-3.5 text-accent" />
+                          {g.title}
+                        </span>
+                        <span className="text-muted-foreground flex items-center gap-2 text-xs">
+                          {daysRemaining !== null && (
+                            <span className={daysRemaining >= 0 ? "text-accent font-medium" : "text-rose-500 font-medium"}>
+                              {daysRemaining >= 0 ? `${daysRemaining}d left` : `Overdue (${daysRemaining}d)`}
+                            </span>
+                          )}
+                          <span className="text-muted-foreground">•</span>
+                          <span>{g.progress}%</span>
+                        </span>
+                      </div>
+                      <Progress value={g.progress} className="mt-1.5 h-1.5" />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Projects progress</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {(projectsQ.data ?? []).length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No projects yet.
+              </p>
+            )}
+            
+            {/* Personal or Passion */}
+            {(projectsQ.data ?? []).filter((p: any) => p.project_type === "Personal or Passion" || !p.project_type).length > 0 && (
+              <div className="space-y-2">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Personal or Passion</div>
+                {(projectsQ.data ?? []).filter((p: any) => p.project_type === "Personal or Passion" || !p.project_type).map((p: any) => (
+                  <div key={p.id}>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="truncate">{p.name}</span>
+                      <span className="text-xs text-muted-foreground">{p.progress ?? 0}%</span>
+                    </div>
+                    <Progress value={p.progress ?? 0} className="mt-1.5 h-1.5" />
                   </div>
-                  <Progress value={g.progress} className="mt-1.5 h-1.5" />
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            )}
+
+            {/* Salary */}
+            {(projectsQ.data ?? []).filter((p: any) => p.project_type === "Salary").length > 0 && (
+              <div className="space-y-2">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Salary</div>
+                {(projectsQ.data ?? []).filter((p: any) => p.project_type === "Salary").map((p: any) => (
+                  <div key={p.id}>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="truncate">{p.name}</span>
+                      <span className="text-xs text-muted-foreground">{p.progress ?? 0}%</span>
+                    </div>
+                    <Progress value={p.progress ?? 0} className="mt-1.5 h-1.5" />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Other Money Making */}
+            {(projectsQ.data ?? []).filter((p: any) => p.project_type === "Other Money Making").length > 0 && (
+              <div className="space-y-2">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Other Money Making</div>
+                {(projectsQ.data ?? []).filter((p: any) => p.project_type === "Other Money Making").map((p: any) => (
+                  <div key={p.id}>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="truncate">{p.name}</span>
+                      <span className="text-xs text-muted-foreground">{p.progress ?? 0}%</span>
+                    </div>
+                    <Progress value={p.progress ?? 0} className="mt-1.5 h-1.5" />
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -440,11 +552,11 @@ function Dashboard() {
                   className="flex items-center justify-between rounded-lg border bg-card/40 px-3 py-2 text-sm"
                 >
                   <span className="font-medium text-foreground">{t.title}</span>
-                  <span className="text-xs font-semibold text-accent">
+                  <span className={`text-xs font-semibold ${daysRemaining !== null && daysRemaining < 0 ? "text-rose-500" : "text-accent"}`}>
                     {daysRemaining !== null
                       ? daysRemaining >= 0
                         ? `${daysRemaining} days left`
-                        : "Overdue"
+                        : `Overdue (${daysRemaining}d)`
                       : t.status}
                   </span>
                 </div>
@@ -467,7 +579,7 @@ function Dashboard() {
           {(achievementsQ.data ?? []).map((a) => (
             <div
               key={a.id}
-              className="rounded-full border bg-accent/10 px-3 py-1 text-xs text-accent-foreground"
+              className="rounded-full border bg-accent/10 px-3 py-1 text-xs text-foreground font-medium"
             >
               🏆 {a.title}
             </div>

@@ -24,6 +24,13 @@ import { Plus, Trash2, ChevronDown, ChevronUp, Target } from "lucide-react";
 import { toast } from "sonner";
 import { DatePicker } from "@/components/DatePicker";
 import { SelectWithAdd, type SelectOption } from "@/components/SelectWithAdd";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/_app/goals")({
   component: GoalsPage,
@@ -85,6 +92,8 @@ function GoalsPage() {
     description: "",
     target_date: "" as string | null,
     notes: "",
+    goal_type: "monthly",
+    parent_goal_id: "none",
   };
   const [form, setForm] = useState(blank);
 
@@ -97,6 +106,8 @@ function GoalsPage() {
       description: form.description,
       target_date: form.target_date || null,
       notes: form.notes,
+      goal_type: form.goal_type,
+      parent_goal_id: form.goal_type === "weekly" && form.parent_goal_id !== "none" ? form.parent_goal_id : null,
     });
     if (error) return toast.error(error.message);
     setOpen(false);
@@ -143,6 +154,36 @@ function GoalsPage() {
               <DialogDescription>Set a clear, measurable outcome.</DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label>Goal Type</Label>
+                  <Select value={form.goal_type} onValueChange={(v) => setForm({ ...form, goal_type: v })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monthly">Monthly Goal</SelectItem>
+                      <SelectItem value="weekly">Weekly Goal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {form.goal_type === "weekly" && (
+                  <div>
+                    <Label>Linked Monthly Goal</Label>
+                    <Select value={form.parent_goal_id} onValueChange={(v) => setForm({ ...form, parent_goal_id: v })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select monthly goal" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {goals.filter((g: any) => g.goal_type !== "weekly").map((g: any) => (
+                          <SelectItem key={g.id} value={g.id}>{g.title}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
               <div>
                 <Label>Category</Label>
                 <SelectWithAdd
@@ -198,21 +239,58 @@ function GoalsPage() {
         <CounterCard label="Avg progress" value={`${avgProgress}%`} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {goals.map((g) => (
-          <GoalCard
-            key={g.id}
-            goal={g}
-            categories={categories}
-            onProgress={(p: number) => updateProgress(g.id, p)}
-            onRemove={() => remove(g.id)}
-            onChanged={() => qc.invalidateQueries({ queryKey: ["goals", uid] })}
-          />
-        ))}
+      <div className="space-y-8">
+        {goals.filter((g: any) => g.goal_type !== "weekly").map((mg: any) => {
+          const weekly = goals.filter((g: any) => g.parent_goal_id === mg.id);
+          return (
+            <div key={mg.id} className="space-y-4">
+              <GoalCard
+                goal={mg}
+                categories={categories}
+                onProgress={(p: number) => updateProgress(mg.id, p)}
+                onRemove={() => remove(mg.id)}
+                onChanged={() => qc.invalidateQueries({ queryKey: ["goals", uid] })}
+              />
+              {weekly.length > 0 && (
+                <div className="pl-6 md:pl-10 space-y-4 border-l-2 border-primary/20 ml-4 md:ml-6">
+                  {weekly.map((wg: any) => (
+                    <GoalCard
+                      key={wg.id}
+                      goal={wg}
+                      categories={categories}
+                      onProgress={(p: number) => updateProgress(wg.id, p)}
+                      onRemove={() => remove(wg.id)}
+                      onChanged={() => qc.invalidateQueries({ queryKey: ["goals", uid] })}
+                      isWeekly={true}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
         {goals.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center md:col-span-2">
-            No goals yet. Create your Number One Goal first.
+          <p className="text-sm text-muted-foreground text-center">
+            No goals yet. Create a Monthly Goal first.
           </p>
+        )}
+        
+        {/* Render unlinked weekly goals just in case */}
+        {goals.filter((g: any) => g.goal_type === "weekly" && !g.parent_goal_id).length > 0 && (
+          <div className="space-y-4 pt-4 border-t border-border">
+            <h3 className="font-display text-xl text-muted-foreground">Unlinked Weekly Goals</h3>
+            {goals.filter((g: any) => g.goal_type === "weekly" && !g.parent_goal_id).map((wg: any) => (
+              <GoalCard
+                key={wg.id}
+                goal={wg}
+                categories={categories}
+                onProgress={(p: number) => updateProgress(wg.id, p)}
+                onRemove={() => remove(wg.id)}
+                onChanged={() => qc.invalidateQueries({ queryKey: ["goals", uid] })}
+                isWeekly={true}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
@@ -230,7 +308,7 @@ function CounterCard({ label, value }: { label: string; value: number | string }
   );
 }
 
-function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
+function GoalCard({ goal, categories, onProgress, onRemove, onChanged, isWeekly }: any) {
   const [openDetail, setOpenDetail] = useState(false);
   const [milestones, setMilestones] = useState<Milestone[]>(
     Array.isArray(goal.milestones) ? goal.milestones : [],
@@ -246,6 +324,12 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
   useEffect(() => {
     setLocalProgress(goal.progress ?? 0);
   }, [goal.progress]);
+
+  const tasksQ = useQuery({
+    queryKey: ["goal-tasks", goal.id],
+    queryFn: async () =>
+      (await supabase.from("tasks").select("*").eq("goal_id", goal.id)).data ?? [],
+  });
 
   const persistMilestones = async (next: Milestone[]) => {
     setMilestones(next);
@@ -282,6 +366,7 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <div className="text-[10px] uppercase tracking-widest text-accent">
+              {isWeekly ? "Weekly Goal • " : "Monthly Goal • "}
               {categories.find((c: any) => c.value === goal.category)?.label ?? goal.category}
             </div>
             <h3 className="font-display text-2xl mt-1 break-words">{goal.title}</h3>
@@ -320,9 +405,26 @@ function GoalCard({ goal, categories, onProgress, onRemove, onChanged }: any) {
             {target ? `🎯 ${target}` : "No target date"}
           </span>
           <span className="text-muted-foreground">
-            {milestones.filter((m) => m.done).length}/{milestones.length} milestones
+            {milestones.filter((m: any) => m.done).length}/{milestones.length} milestones
           </span>
         </div>
+        
+        {tasksQ.data && tasksQ.data.length > 0 && (
+          <div className="bg-card/40 border rounded-lg p-2 space-y-1.5 mt-2">
+            <div className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">Linked Tasks</div>
+            {tasksQ.data.slice(0, 3).map((t: any) => (
+              <div key={t.id} className="text-xs truncate flex items-center gap-1.5">
+                <div className={`size-1.5 rounded-full ${t.status === 'completed' ? 'bg-primary' : 'bg-muted-foreground/50'}`} />
+                <span className={t.status === 'completed' ? 'line-through text-muted-foreground' : ''}>{t.title}</span>
+              </div>
+            ))}
+            {tasksQ.data.length > 3 && (
+              <div className="text-[10px] text-muted-foreground pl-3">
+                +{tasksQ.data.length - 3} more
+              </div>
+            )}
+          </div>
+        )}
 
         <Collapsible open={openDetail} onOpenChange={setOpenDetail}>
           <CollapsibleTrigger asChild>

@@ -23,6 +23,13 @@ import { toast } from "sonner";
 import { DatePicker } from "@/components/DatePicker";
 import { SelectWithAdd, type SelectOption } from "@/components/SelectWithAdd";
 import { differenceInCalendarDays } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/_app/projects/")({
   component: ProjectsPage,
@@ -43,6 +50,7 @@ type ProjectForm = {
   notes: string;
   is_recurring: boolean;
   target_days: number;
+  project_type: string;
 };
 
 const BLANK: ProjectForm = {
@@ -53,6 +61,7 @@ const BLANK: ProjectForm = {
   notes: "",
   is_recurring: false,
   target_days: 90,
+  project_type: "Personal or Passion",
 };
 
 function ProjectsPage() {
@@ -98,6 +107,7 @@ function ProjectsPage() {
       notes: form.notes,
       is_recurring: form.is_recurring,
       target_days: form.target_days || 90,
+      project_type: form.project_type,
     };
     if (editId) {
       const { error } = await supabase.from("projects").update(payload).eq("id", editId);
@@ -128,6 +138,7 @@ function ProjectsPage() {
       notes: p.notes ?? "",
       is_recurring: !!p.is_recurring,
       target_days: p.target_days ?? 90,
+      project_type: p.project_type ?? "Personal or Passion",
     });
     setOpen(true);
   };
@@ -145,7 +156,39 @@ function ProjectsPage() {
     toast.success("Project deleted");
   };
 
+  const tasksQ = useQuery({
+    queryKey: ["tasks-all", uid],
+    queryFn: async () =>
+      (await supabase.from("tasks").select("*").eq("user_id", uid).neq("status", "completed")).data ?? [],
+  });
+
   const projects = q.data ?? [];
+  const passionProjects = projects.filter(p => p.project_type === "Personal or Passion" || !p.project_type);
+  const salaryProjects = projects.filter(p => p.project_type === "Salary");
+  const otherProjects = projects.filter(p => p.project_type === "Other Money Making");
+
+  const renderSection = (title: string, projs: any[]) => (
+    <div className="space-y-4">
+      <h2 className="text-xl font-display text-primary">{title}</h2>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {projs.map((p) => (
+          <ProjectCard
+            key={p.id}
+            project={p}
+            priorities={priorities}
+            tasks={(tasksQ.data ?? []).filter((t: any) => t.project_id === p.id)}
+            onEdit={() => startEdit(p)}
+            onDelete={() => remove(p.id)}
+          />
+        ))}
+        {projs.length === 0 && (
+          <p className="text-sm text-muted-foreground col-span-full">
+            No projects in this category.
+          </p>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -210,6 +253,19 @@ function ProjectsPage() {
                 />
               </div>
               <div>
+                <Label>Project Type</Label>
+                <Select value={form.project_type} onValueChange={(v) => setForm({ ...form, project_type: v })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Personal or Passion">Personal or Passion</SelectItem>
+                    <SelectItem value="Salary">Salary</SelectItem>
+                    <SelectItem value="Other Money Making">Other Money Making</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label>Priority</Label>
                 <SelectWithAdd
                   value={form.priority}
@@ -270,28 +326,17 @@ function ProjectsPage() {
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((p) => (
-            <ProjectCard
-              key={p.id}
-              project={p}
-              priorities={priorities}
-              onEdit={() => startEdit(p)}
-              onDelete={() => remove(p.id)}
-            />
-          ))}
-          {projects.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center md:col-span-2 lg:col-span-3">
-              No projects yet. Add one to start shipping.
-            </p>
-          )}
+        <div className="space-y-10">
+          {renderSection("Personal or Passion", passionProjects)}
+          {renderSection("Salary", salaryProjects)}
+          {renderSection("Other Money Making", otherProjects)}
         </div>
       )}
     </div>
   );
 }
 
-function ProjectCard({ project: p, priorities, onEdit, onDelete }: any) {
+function ProjectCard({ project: p, priorities, tasks = [], onEdit, onDelete }: any) {
   const recurring = !!p.is_recurring;
   const daysLeft = p.deadline
     ? Math.max(0, differenceInCalendarDays(new Date(p.deadline), new Date()))
@@ -365,14 +410,31 @@ function ProjectCard({ project: p, priorities, onEdit, onDelete }: any) {
           )}
         </Link>
 
-        <div className="relative h-2 rounded-full bg-secondary overflow-hidden">
+        {tasks.length > 0 && !recurring && (
+          <div className="bg-card/40 border rounded-lg p-2 space-y-1.5 mt-2">
+            <div className="text-[10px] uppercase text-muted-foreground tracking-wider mb-1">Upcoming Tasks</div>
+            {tasks.slice(0, 3).map((t: any) => (
+              <div key={t.id} className="text-xs truncate flex items-center gap-1.5">
+                <div className="size-1.5 rounded-full bg-primary/50" />
+                {t.title}
+              </div>
+            ))}
+            {tasks.length > 3 && (
+              <div className="text-[10px] text-muted-foreground pl-3">
+                +{tasks.length - 3} more
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="relative h-2 rounded-full bg-secondary overflow-hidden mt-3">
           <div
             className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] transition-all"
             style={{ width: `${p.progress ?? 0}%` }}
           />
         </div>
 
-        <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center justify-between text-xs mt-3">
           {recurring ? (
             <span className="text-muted-foreground">
               <span className="font-medium text-foreground">{daysDone}</span>/{targetDays} days done

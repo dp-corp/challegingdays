@@ -24,7 +24,7 @@ import { maybeAwardBadges } from "@/lib/badges";
 
 export const Route = createFileRoute("/_app/daily")({
   component: DailyPage,
-  head: () => ({ meta: [{ title: "Daily Tracker - 90-Day Life OS" }] }),
+  head: () => ({ meta: [{ title: "Habit Tracker - 90-Day Life OS" }] }),
 });
 
 const DEFAULT_HABITS = [
@@ -299,7 +299,7 @@ function DailyPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-4xl md:text-5xl bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-            Daily Tracker
+            Habit Tracker
           </h1>
           <p className="mt-2 text-muted-foreground">{format(new Date(), "EEEE, MMMM d")}</p>
         </div>
